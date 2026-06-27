@@ -54,7 +54,8 @@ function parseArgs(argv) {
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
-    if (arg === "--dry-run") args.dryRun = true;
+    if (arg === "--") continue;
+    else if (arg === "--dry-run") args.dryRun = true;
     else if (arg === "--no-update") args.update = false;
     else if (arg === "--scan") args.scan = true;
     else if (arg === "--target") {
