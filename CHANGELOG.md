@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-This project follows semantic versioning. Releases are cut with `npm version` and published from GitHub tags.
+This project follows semantic versioning. Releases are cut with `npm version` and published as GitHub Releases from tags.
 
 ## [0.1.0] - 2026-06-27
 

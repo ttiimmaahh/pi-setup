@@ -41,13 +41,7 @@ See [`docs/security.md`](docs/security.md) for the public-repo safety model.
 
 ## Usage on a new machine
 
-After the package is published to npm, the easiest cross-platform install is:
-
-```bash
-npx --yes @ttiimmaahh/pi-setup
-```
-
-Before npm publication, or when you want the repo version directly:
+The easiest cross-platform install/apply path is direct from GitHub:
 
 ```bash
 npx --yes github:ttiimmaahh/pi-setup
@@ -56,13 +50,13 @@ npx --yes github:ttiimmaahh/pi-setup
 Preview without writing files:
 
 ```bash
-npx --yes @ttiimmaahh/pi-setup -- --dry-run
+npx --yes github:ttiimmaahh/pi-setup -- --dry-run
 ```
 
 Skip package reconciliation:
 
 ```bash
-npx --yes @ttiimmaahh/pi-setup -- --no-update
+npx --yes github:ttiimmaahh/pi-setup -- --no-update
 ```
 
 Manual clone/apply still works:
@@ -128,7 +122,7 @@ Those paths must exist on any target machine, or the entries should be replaced 
 
 ## Releasing
 
-This repo is versioned as an npm package so users can run it with `npx`.
+This repo has npm package metadata only so users can run it directly from GitHub with `npx`. It is marked `private` and is not intended for npm registry publication.
 
 Release flow:
 
@@ -137,24 +131,16 @@ npm version patch   # or minor/major
 git push --follow-tags
 ```
 
-The tag-driven GitHub Action verifies the tag matches `package.json`, runs `npm run check`, publishes to npm via Trusted Publishing, and creates a GitHub Release.
-
-Before the first npm publish, configure npm Trusted Publishing for:
-
-```text
-package: @ttiimmaahh/pi-setup
-repository: ttiimmaahh/pi-setup
-workflow: .github/workflows/publish.yml
-```
+The tag-driven GitHub Action verifies the tag matches `package.json`, runs `npm run check`, and creates a GitHub Release with the direct `npx github:ttiimmaahh/pi-setup` command.
 
 ## Files
 
 ```text
-package.json                     # npm/npx entrypoint metadata
+package.json                     # private npm/npx entrypoint metadata for GitHub npx usage
 package-lock.json                # reproducible npm metadata for CI
 CHANGELOG.md                     # release notes consumed by GitHub Releases
 .github/workflows/ci.yml         # push/PR checks
-.github/workflows/publish.yml    # tag-driven npm + GitHub Release workflow
+.github/workflows/release.yml    # tag-driven GitHub Release workflow
 bin/pi-setup.js                  # cross-platform Node CLI for npx usage
 apply.sh                         # restore config/ into ~/.pi/agent/ on macOS/Linux
 export.sh                        # export auth-free ~/.pi/agent config into config/ on macOS/Linux

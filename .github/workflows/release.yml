@@ -1,15 +1,12 @@
-name: Publish
+name: Release
 
-# Tag-driven release. Bump the version locally with `npm version <patch|minor|major>`
-# (which commits package.json + package-lock.json and tags vX.Y.Z), then
-# `git push --follow-tags`.
+# Tag-driven GitHub Release. Bump the version locally with
+# `npm version <patch|minor|major>` (which commits package.json +
+# package-lock.json and tags vX.Y.Z), then `git push --follow-tags`.
 #
 # This workflow fires on the v* tag, verifies the tag matches package.json,
-# runs checks, publishes to npm via Trusted Publishing/OIDC, and creates a
-# matching GitHub Release.
-#
-# One-time npm setup required before the first publish: register this repo and
-# workflow as a Trusted Publisher for @ttiimmaahh/pi-setup on npmjs.com.
+# runs checks, and creates a matching GitHub Release. This package is intended
+# for direct GitHub npx usage, not npm registry publication.
 
 on:
   push:
@@ -18,10 +15,9 @@ on:
 
 permissions:
   contents: write # required to create the matching GitHub Release
-  id-token: write # required for npm OIDC trusted publishing
 
 jobs:
-  publish:
+  release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -29,19 +25,14 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
-          registry-url: "https://registry.npmjs.org"
           cache: npm
-
-      # Trusted publishing requires npm CLI >= 11.5.1.
-      - name: Update npm
-        run: npm install -g npm@latest
 
       - name: Install dependencies
         run: npm ci
 
-      # Fail loud if the tag and package.json disagree, so we never publish a
-      # version that doesn't match the ref it was cut from. Reads the tag from
-      # the GITHUB_REF_NAME env var (not ${{ }} interpolation) — no injection.
+      # Fail loud if the tag and package.json disagree, so releases always match
+      # the ref they were cut from. Reads the tag from GITHUB_REF_NAME, not from
+      # workflow interpolation.
       - name: Verify tag matches package.json version
         run: |
           tag_version="${GITHUB_REF_NAME#v}"
@@ -54,22 +45,6 @@ jobs:
 
       - name: Check
         run: npm run check
-
-      - name: Check npm publication status
-        id: npm_status
-        run: |
-          package_name="$(node -p "require('./package.json').name")"
-          package_version="$(node -p "require('./package.json').version")"
-          if npm view "${package_name}@${package_version}" version >/dev/null 2>&1; then
-            echo "published=true" >> "${GITHUB_OUTPUT}"
-            echo "${package_name}@${package_version} is already published; skipping npm publish."
-          else
-            echo "published=false" >> "${GITHUB_OUTPUT}"
-          fi
-
-      - name: Publish to npm
-        if: steps.npm_status.outputs.published != 'true'
-        run: npm publish --access public
 
       - name: Prepare GitHub Release notes
         run: |
@@ -85,7 +60,16 @@ jobs:
             echo "See CHANGELOG.md for release details." > release-notes.md
           fi
 
-          printf "\n---\n\nPublished to npm: https://www.npmjs.com/package/@ttiimmaahh/pi-setup/v/%s\n" "${tag_version}" >> release-notes.md
+          cat >> release-notes.md <<'EOF'
+
+---
+
+Install/apply directly from GitHub:
+
+```bash
+npx --yes github:ttiimmaahh/pi-setup
+```
+EOF
 
       - name: Create GitHub Release
         env:

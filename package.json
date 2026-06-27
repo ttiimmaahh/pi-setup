@@ -2,6 +2,7 @@
   "name": "@ttiimmaahh/pi-setup",
   "version": "0.1.0",
   "description": "Portable, auth-free setup for my Pi coding agent configuration.",
+  "private": true,
   "license": "MIT",
   "bin": {
     "pi-setup": "./bin/pi-setup.js"
