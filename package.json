@@ -1,0 +1,46 @@
+{
+  "name": "@ttiimmaahh/pi-setup",
+  "version": "0.1.0",
+  "description": "Portable, auth-free setup for my Pi coding agent configuration.",
+  "license": "MIT",
+  "bin": {
+    "pi-setup": "./bin/pi-setup.js"
+  },
+  "scripts": {
+    "check": "node --check bin/pi-setup.js && node bin/pi-setup.js --scan && npm pack --dry-run",
+    "scan": "node bin/pi-setup.js --scan",
+    "dry-run": "node bin/pi-setup.js --dry-run --no-update",
+    "preversion": "npm run check"
+  },
+  "files": [
+    "Apply.ps1",
+    "Export.ps1",
+    "SecurityScan.ps1",
+    "apply.sh",
+    "export.sh",
+    "security-scan.sh",
+    "bin/",
+    "config/",
+    "docs/",
+    "scripts/",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "pi",
+    "pi-coding-agent",
+    "dotfiles",
+    "agent-config"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ttiimmaahh/pi-setup.git"
+  },
+  "homepage": "https://github.com/ttiimmaahh/pi-setup#readme",
+  "bugs": {
+    "url": "https://github.com/ttiimmaahh/pi-setup/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
