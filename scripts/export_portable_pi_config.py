@@ -48,6 +48,8 @@ IGNORE_PATTERNS = (
     "*.log",
     ".env",
     ".env.*",
+    # Work-specific prompt templates should not be exported to the public personal setup.
+    "apex-*.md",
 )
 
 
@@ -192,6 +194,8 @@ def main() -> int:
         if destination.exists():
             shutil.rmtree(destination)
         shutil.copytree(source, destination, ignore=shutil.ignore_patterns(*IGNORE_PATTERNS))
+        if not any(destination.rglob("*")):
+            shutil.rmtree(destination)
 
     print(f"Exported portable Pi config from {pi_dir} to {out_dir}")
     return 0
