@@ -30,8 +30,16 @@ This repo is intended to be safe for a public GitHub repository.
 Run:
 
 ```bash
-bash scripts/security_scan.py
+python3 scripts/security_scan.py
 ```
+
+On Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\SecurityScan.ps1
+```
+
+The scanner checks the current working tree, untracked files, and reachable Git history from all refs.
 
 Also manually review:
 

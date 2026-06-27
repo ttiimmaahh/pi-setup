@@ -47,6 +47,16 @@ cd pi-setup
 bash apply.sh
 ```
 
+On Windows PowerShell:
+
+```powershell
+git clone https://github.com/ttiimmaahh/pi-setup.git
+cd pi-setup
+powershell -ExecutionPolicy Bypass -File .\Apply.ps1
+```
+
+Pi itself requires a bash shell on Windows; [Git for Windows](https://git-scm.com/download/win) is usually enough.
+
 Then authenticate separately:
 
 ```bash
@@ -66,7 +76,14 @@ After changing your Pi setup, run:
 
 ```bash
 bash export.sh
-bash scripts/security_scan.py
+python3 scripts/security_scan.py
+```
+
+On Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\Export.ps1
+powershell -ExecutionPolicy Bypass -File .\SecurityScan.ps1
 ```
 
 Review the diff before committing.
@@ -86,8 +103,11 @@ Those paths must exist on any target machine, or the entries should be replaced 
 ## Files
 
 ```text
-apply.sh                         # restore config/ into ~/.pi/agent/
-export.sh                        # export auth-free ~/.pi/agent config into config/
+apply.sh                         # restore config/ into ~/.pi/agent/ on macOS/Linux
+export.sh                        # export auth-free ~/.pi/agent config into config/ on macOS/Linux
+Apply.ps1                        # PowerShell restore script for Windows
+Export.ps1                       # PowerShell export script for Windows
+SecurityScan.ps1                 # PowerShell security-scan wrapper
 config/                          # portable Pi configuration snapshot
 scripts/export_portable_pi_config.py
 scripts/check_local_package_paths.py
