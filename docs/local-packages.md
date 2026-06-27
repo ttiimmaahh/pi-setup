@@ -6,7 +6,7 @@ This public setup intentionally excludes local package paths from `config/settin
 
 ## Export behavior
 
-`export.sh` / `Export.ps1` drop local package entries by default when refreshing `config/settings.json`.
+`export.sh` / `Export.ps1` drop local package entries by default when refreshing `config/settings.json`. They also export empty public placeholders for `models.json` and `mcp.json` unless explicitly overridden.
 
 To keep local paths during a private export, run:
 
@@ -21,7 +21,21 @@ $env:PI_SETUP_INCLUDE_LOCAL_PACKAGES = "1"
 powershell -ExecutionPolicy Bypass -File .\Export.ps1
 ```
 
-Only use that for private/local branches. Do not publish local machine paths in the public setup unless those paths are intentionally part of the documented workflow.
+To keep local model or MCP config during a private export, set:
+
+```bash
+PI_SETUP_INCLUDE_MODELS=1 PI_SETUP_INCLUDE_MCP=1 bash export.sh
+```
+
+On PowerShell:
+
+```powershell
+$env:PI_SETUP_INCLUDE_MODELS = "1"
+$env:PI_SETUP_INCLUDE_MCP = "1"
+powershell -ExecutionPolicy Bypass -File .\Export.ps1
+```
+
+Only use these flags for private/local branches. Do not publish local machine paths, model defaults, or MCP endpoints in the public setup unless they are intentionally part of the documented workflow.
 
 ## Options for local development packages
 

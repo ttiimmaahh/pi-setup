@@ -1,12 +1,4 @@
 {
   "imports": [],
-  "mcpServers": {
-    "linear": {
-      "url": "https://mcp.linear.app/mcp"
-    },
-    "executor": {
-      "type": "http",
-      "url": "https://exe.cloudavalanche.com/mcp"
-    }
-  }
+  "mcpServers": {}
 }

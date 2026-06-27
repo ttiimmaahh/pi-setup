@@ -1,5 +1,4 @@
 {
-  "model": "sap-aicore/anthropic--claude-4.5-haiku",
   "threshold": {
     "type": "percent",
     "value": 80

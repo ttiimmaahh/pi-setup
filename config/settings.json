@@ -17,8 +17,6 @@
     "npm:pi-web-access",
     "npm:pi-usage-bar"
   ],
-  "defaultProvider": "sap-aicore-foundation",
-  "defaultModel": "gpt-5.5",
   "hideThinkingBlock": false,
   "defaultThinkingLevel": "high",
   "theme": "dark"

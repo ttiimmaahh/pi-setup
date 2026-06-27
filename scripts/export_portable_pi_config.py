@@ -14,6 +14,9 @@ SECRET_KEY_RE = re.compile(r"(auth|token|secret|password|credential|cookie|refre
 DROP_SETTINGS_KEYS = {
     "lastChangelogVersion",
     "trackingId",
+    # Public setup should not force a user's provider/model choice.
+    "defaultProvider",
+    "defaultModel",
 }
 LOCAL_PATH_HINT_RE = re.compile(r"^(?:\.|/|~)")
 
@@ -75,7 +78,23 @@ def strip_auth_fields(value):
     return value
 
 
+def sanitize_mcp_config(mcp_config):
+    if os.environ.get("PI_SETUP_INCLUDE_MCP") != "1":
+        return {"imports": [], "mcpServers": {}}
+    return strip_auth_fields(mcp_config)
+
+
+def sanitize_handoff_config(config):
+    if isinstance(config, dict):
+        # Let pi-handoff auto-pick a cheap available model for each user's setup.
+        config.pop("model", None)
+    return config
+
+
 def sanitize_models(models):
+    if os.environ.get("PI_SETUP_INCLUDE_MODELS") != "1":
+        return {"providers": {}}
+
     providers = models.get("providers")
     if not isinstance(providers, dict):
         return models
@@ -184,7 +203,11 @@ def main() -> int:
 
     mcp_path = pi_dir / "mcp.json"
     if mcp_path.exists():
-        write_json(out_dir / "mcp.json", strip_auth_fields(load_json(mcp_path)))
+        write_json(out_dir / "mcp.json", sanitize_mcp_config(load_json(mcp_path)))
+
+    handoff_path = out_dir / "pi-handoff-config.json"
+    if handoff_path.exists():
+        write_json(handoff_path, sanitize_handoff_config(load_json(handoff_path)))
 
     for directory_name in PORTABLE_DIRS:
         source = pi_dir / directory_name

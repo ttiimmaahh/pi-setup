@@ -12,8 +12,8 @@ It also acts as a public index of the Pi extensions I use and maintain. See [`do
 
 - `settings.json` package/resource configuration
 - `keybindings.json`
-- `models.json` with API keys represented as environment-variable references
-- `mcp.json` with auth fields removed
+- empty `models.json` placeholder so provider/model choices are not forced
+- empty `mcp.json` placeholder so MCP servers/auth are not forced
 - prompt templates in `prompts/`
 - local `extensions/`, `skills/`, and `themes/` if present
 - auth-free extension preference files, currently:

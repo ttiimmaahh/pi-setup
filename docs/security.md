@@ -8,8 +8,8 @@ This repo is intended to be safe for a public GitHub repository.
 - Keyboard shortcuts
 - Prompt templates
 - Custom skills/extensions/themes that contain no secrets
-- MCP server definitions with auth removed
-- Model definitions with API keys represented as environment variables, for example `$LMSTUDIO_API_KEY`
+- Empty MCP placeholder config (`config/mcp.json`) unless a server is intentionally public and auth-free
+- Empty model placeholder config (`config/models.json`) unless a model provider is intentionally public and auth-free
 - Extension preference files that contain only display/configuration options
 
 ## Not allowed
@@ -59,4 +59,4 @@ pi
 # /login
 ```
 
-Or define provider-specific environment variables referenced from `config/models.json`.
+Provider/model and MCP configuration are intentionally left empty in this public setup. Add those locally after applying the setup.
