@@ -1,0 +1,28 @@
+{
+  "packages": [
+    {
+      "source": "npm:@plannotator/pi-extension",
+      "skills": []
+    },
+    "npm:pi-hermes-memory",
+    "npm:pi-mcp-adapter",
+    "npm:pi-lens",
+    "npm:pi-context",
+    "npm:pi-subagents",
+    "npm:pi-bar",
+    "npm:@juicesharp/rpiv-ask-user-question",
+    "npm:@juicesharp/rpiv-btw",
+    "npm:pi-sap-aicore",
+    "npm:@ttiimmaahh/pi-handoff",
+    "../../Developer/gitroot/personal/pi-extensions/pi-tool-chrome",
+    "npm:pi-web-access",
+    "../../Developer/gitroot/personal/pi-usage-bar",
+    "npm:pi-usage-bar",
+    "../../Developer/gitroot/personal/pi-extensions/pi-qol"
+  ],
+  "defaultProvider": "sap-aicore-foundation",
+  "defaultModel": "gpt-5.5",
+  "hideThinkingBlock": false,
+  "defaultThinkingLevel": "high",
+  "theme": "dark"
+}

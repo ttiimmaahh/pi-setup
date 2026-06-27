@@ -1,0 +1,53 @@
+# OS/editor
+.DS_Store
+*.swp
+*.swo
+
+# Dependency/build output
+node_modules/
+dist/
+build/
+coverage/
+*.log
+
+# Environment/secrets
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Pi auth, runtime state, caches, and history: never commit
+auth.json
+mcp-oauth/
+sessions/
+usage/
+run-history.jsonl
+trust.json
+mcp-cache.json
+mcp-onboarding.json
+projects-memory/
+pi-hermes-memory/
+*.db
+*.db-shm
+*.db-wal
+
+# Same exclusions if someone accidentally copies a whole ~/.pi/agent tree under config/
+config/auth.json
+config/mcp-oauth/
+config/sessions/
+config/usage/
+config/run-history.jsonl
+config/trust.json
+config/mcp-cache.json
+config/mcp-onboarding.json
+config/projects-memory/
+config/pi-hermes-memory/
+config/**/*.db
+config/**/*.db-shm
+config/**/*.db-wal
+
+# Python
+__pycache__/
+*.py[cod]

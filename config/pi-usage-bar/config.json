@@ -1,0 +1,25 @@
+{
+	"segments": [
+		"model",
+		"context",
+		"session",
+		"cost",
+		"project",
+		"extensions",
+		"thinking"
+	],
+	"warningThreshold": 70,
+	"errorThreshold": 90,
+	"showSecondLine": true,
+	"projectAliases": {},
+	"display": {
+		"projectLabel": "full"
+	},
+	"privacy": {
+		"storeCwd": true,
+		"storeGitRemote": true,
+		"storeSessionFile": true,
+		"storeSessionName": true,
+		"hashSessionIds": false
+	}
+}
