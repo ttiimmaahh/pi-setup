@@ -76,7 +76,7 @@ After changing your Pi setup, run:
 
 ```bash
 bash export.sh
-python3 scripts/security_scan.py
+bash security-scan.sh
 ```
 
 On Windows PowerShell:
@@ -107,6 +107,7 @@ apply.sh                         # restore config/ into ~/.pi/agent/ on macOS/Li
 export.sh                        # export auth-free ~/.pi/agent config into config/ on macOS/Linux
 Apply.ps1                        # PowerShell restore script for Windows
 Export.ps1                       # PowerShell export script for Windows
+security-scan.sh                 # macOS/Linux security-scan wrapper
 SecurityScan.ps1                 # PowerShell security-scan wrapper
 config/                          # portable Pi configuration snapshot
 scripts/export_portable_pi_config.py

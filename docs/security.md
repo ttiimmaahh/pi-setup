@@ -30,7 +30,7 @@ This repo is intended to be safe for a public GitHub repository.
 Run:
 
 ```bash
-python3 scripts/security_scan.py
+bash security-scan.sh
 ```
 
 On Windows PowerShell:
