@@ -18,7 +18,6 @@ const portableFiles = [
   "models.json",
   "mcp.json",
   "pi-handoff-config.json",
-  path.join("pi-tool-chrome", "config.json"),
   path.join("pi-usage-bar", "config.json"),
 ];
 

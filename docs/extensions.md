@@ -1,6 +1,6 @@
 # Pi extensions I use
 
-This setup doubles as a curated index of Pi extensions I use day to day. The config in [`../config/settings.json`](../config/settings.json) installs or references these packages where appropriate.
+This setup doubles as a curated index of public Pi extensions I use day to day. The config in [`../config/settings.json`](../config/settings.json) installs or references these packages where appropriate.
 
 ## My public Pi extensions
 
@@ -9,8 +9,6 @@ This setup doubles as a curated index of Pi extensions I use day to day. The con
 | [`@ttiimmaahh/pi-handoff`](https://github.com/ttiimmaahh/pi-handoff) | `npm:@ttiimmaahh/pi-handoff` | Proactive context handoff for Pi. At a context-usage threshold, it can write a structured session handoff and offer to reload it in a new session. |
 | [`pi-sap-aicore`](https://github.com/ttiimmaahh/pi-sap-aicore) | `npm:pi-sap-aicore` | SAP AI Core provider for Pi, including orchestration and foundation model support. |
 | [`pi-usage-bar`](https://github.com/ttiimmaahh/pi-usage-bar) | `npm:pi-usage-bar` | Footer/statusline plus local usage ledger for per-session and per-project token/cost attribution. |
-| `pi-tool-chrome` | local package path in this setup | Compact row/card renderers for Pi built-in tool calls. |
-| `pi-qol` | local package path in this setup | Quality-of-life enhancements for the Pi coding agent. |
 
 ## Other Pi packages in this setup
 
@@ -29,18 +27,6 @@ These are third-party or separately maintained packages currently referenced by 
 | `npm:@juicesharp/rpiv-btw` | Additional Pi workflow/tooling package. |
 | `npm:pi-web-access` | Web access/research tools. |
 
-## Local development package caveat
-
-Some of my extensions are referenced as local paths while I develop them:
-
-```text
-../../Developer/gitroot/personal/pi-extensions/pi-tool-chrome
-../../Developer/gitroot/personal/pi-usage-bar
-../../Developer/gitroot/personal/pi-extensions/pi-qol
-```
-
-Those paths are convenient on my machines but are not inherently portable. See [`local-packages.md`](local-packages.md) for options.
-
 ## Adding another extension here
 
 1. Publish or make the extension repo public if you want others to use it.
@@ -49,5 +35,5 @@ Those paths are convenient on my machines but are not inherently portable. See [
 4. Run:
 
    ```bash
-   bash scripts/security_scan.py
+   bash security-scan.sh
    ```

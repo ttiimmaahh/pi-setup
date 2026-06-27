@@ -18,7 +18,6 @@ It also acts as a public index of the Pi extensions I use and maintain. See [`do
 - local `extensions/`, `skills/`, and `themes/` if present
 - auth-free extension preference files, currently:
   - `pi-handoff-config.json`
-  - `pi-tool-chrome/config.json`
   - `pi-usage-bar/config.json`
 
 ## What this never stores
@@ -110,15 +109,7 @@ Review the diff before committing.
 
 ## Local package paths
 
-Some package entries may point at local development repos. The scripts warn when they find entries like:
-
-```text
-../../Developer/gitroot/personal/pi-extensions/pi-tool-chrome
-../../Developer/gitroot/personal/pi-usage-bar
-../../Developer/gitroot/personal/pi-extensions/pi-qol
-```
-
-Those paths must exist on any target machine, or the entries should be replaced with npm/git package specs. See [`docs/local-packages.md`](docs/local-packages.md).
+This public setup intentionally excludes local package paths from `config/settings.json` so it works for other users via `npx github:ttiimmaahh/pi-setup`. See [`docs/local-packages.md`](docs/local-packages.md) for the private/local-development escape hatch.
 
 ## Releasing
 

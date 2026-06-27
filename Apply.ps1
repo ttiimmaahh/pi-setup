@@ -94,7 +94,6 @@ Install-File "keybindings.json"
 Install-File "models.json"
 Install-File "mcp.json"
 Install-File "pi-handoff-config.json"
-Install-File "pi-tool-chrome/config.json"
 Install-File "pi-usage-bar/config.json"
 
 Install-Directory "prompts"

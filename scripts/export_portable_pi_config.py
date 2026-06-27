@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import shutil
 import sys
@@ -26,7 +27,6 @@ PROVIDER_API_KEY_ENV = {
 PORTABLE_FILES = (
     "keybindings.json",
     "pi-handoff-config.json",
-    "pi-tool-chrome/config.json",
     "pi-usage-bar/config.json",
 )
 
@@ -35,6 +35,10 @@ PORTABLE_DIRS = (
     "extensions",
     "skills",
     "themes",
+)
+
+STALE_LOCAL_ONLY_PATHS = (
+    "pi-tool-chrome",
 )
 
 IGNORE_PATTERNS = (
@@ -106,6 +110,31 @@ def find_local_package_hints(settings) -> list[str]:
     return hints
 
 
+def drop_local_package_entries(settings):
+    if not isinstance(settings, dict):
+        return settings
+    packages = settings.get("packages")
+    if not isinstance(packages, list):
+        return settings
+
+    filtered = []
+    dropped = []
+    for entry in packages:
+        source = package_source(entry)
+        if source and LOCAL_PATH_HINT_RE.search(source):
+            dropped.append(source)
+        else:
+            filtered.append(entry)
+
+    settings["packages"] = filtered
+    if dropped:
+        print("Excluded local package paths from exported public config:")
+        for source in dropped:
+            print(f"  - {source}")
+        print("Set PI_SETUP_INCLUDE_LOCAL_PACKAGES=1 to keep them during export.")
+    return settings
+
+
 def main() -> int:
     if len(sys.argv) != 3:
         print("Usage: export_portable_pi_config.py PI_DIR OUT_DIR", file=sys.stderr)
@@ -113,6 +142,14 @@ def main() -> int:
 
     pi_dir = Path(sys.argv[1]).expanduser()
     out_dir = Path(sys.argv[2]).expanduser()
+
+    for stale_path in STALE_LOCAL_ONLY_PATHS:
+        destination = out_dir / stale_path
+        if destination.exists():
+            if destination.is_dir():
+                shutil.rmtree(destination)
+            else:
+                destination.unlink()
 
     settings_path = pi_dir / "settings.json"
     if settings_path.exists():
@@ -122,6 +159,8 @@ def main() -> int:
             for key, value in settings.items()
             if key not in DROP_SETTINGS_KEYS and not SECRET_KEY_RE.search(key)
         }
+        if os.environ.get("PI_SETUP_INCLUDE_LOCAL_PACKAGES") != "1":
+            portable_settings = drop_local_package_entries(portable_settings)
         write_json(out_dir / "settings.json", portable_settings)
 
         local_packages = find_local_package_hints(portable_settings)
