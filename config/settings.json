@@ -15,7 +15,9 @@
     "npm:pi-sap-aicore",
     "npm:@ttiimmaahh/pi-handoff",
     "npm:pi-web-access",
-    "npm:pi-usage-bar"
+    "npm:pi-usage-bar",
+    "npm:pi-intercom",
+    "npm:pi-prompt-template-model"
   ],
   "hideThinkingBlock": false,
   "defaultThinkingLevel": "high",

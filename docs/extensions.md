@@ -26,6 +26,8 @@ These are third-party or separately maintained packages currently referenced by 
 | `npm:@juicesharp/rpiv-ask-user-question` | Structured question UI/tool support. |
 | `npm:@juicesharp/rpiv-btw` | Additional Pi workflow/tooling package. |
 | `npm:pi-web-access` | Web access/research tools. |
+| `npm:pi-intercom` | Live supervisor decisions, progress updates, and grouped result delivery for pi-subagents. |
+| `npm:pi-prompt-template-model` | Reusable prompt-template workflows with model/thinking/skill/subagent frontmatter. |
 
 ## Adding another extension here
 
