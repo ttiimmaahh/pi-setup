@@ -28,11 +28,21 @@ These are third-party or separately maintained packages currently referenced by 
 | `npm:pi-web-access` | Web access/research tools. |
 | `npm:pi-intercom` | Live supervisor decisions, progress updates, and grouped result delivery for pi-subagents. |
 | `npm:pi-prompt-template-model` | Reusable prompt-template workflows with model/thinking/skill/subagent frontmatter. |
+| `npm:@juicesharp/rpiv-todo` | Persistent model-managed task lists with dependency tracking and a live Pi overlay. |
+| `npm:@mobrienv/pi-tidy-tools` | Compact, reason-first rendering for Pi's built-in tools, with configurable layouts and diff summaries. |
+
+## Generated and local-only integrations
+
+Installer-managed loose extensions, such as Herdr's `herdr-agent-state.ts`, are
+intentionally not exported. Their owning installer should recreate and update them
+on each machine. Local package paths are also excluded; see
+[`local-packages.md`](local-packages.md).
 
 ## Adding another extension here
 
 1. Publish or make the extension repo public if you want others to use it.
-2. Add its package spec to `config/settings.json` using an npm or git source when possible.
+2. Add its package spec to `config/settings.json` using an npm or git source when
+   possible.
 3. Add a row to this document.
 4. Run:
 

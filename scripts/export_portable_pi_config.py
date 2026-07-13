@@ -18,7 +18,7 @@ DROP_SETTINGS_KEYS = {
     "defaultProvider",
     "defaultModel",
 }
-LOCAL_PATH_HINT_RE = re.compile(r"^(?:\.|/|~)")
+LOCAL_PATH_HINT_RE = re.compile(r"^(?:\.|[/\\]|~|[A-Za-z]:[/\\])")
 
 # Friendly defaults for known local-only providers. Pi accepts env-var references
 # like "$LMSTUDIO_API_KEY" in models.json, which keeps the file portable.
@@ -53,17 +53,38 @@ IGNORE_PATTERNS = (
     ".env.*",
     # Work-specific prompt templates should not be exported to the public personal setup.
     "apex-*.md",
+    # Herdr installs and upgrades this host-integration shim itself.
+    "herdr-agent-state.ts",
 )
 
 
 def load_json(path: Path):
-    with path.open("r", encoding="utf-8") as fh:
-        return json.load(fh)
+    try:
+        with path.open("r", encoding="utf-8") as fh:
+            return json.load(fh)
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"Could not read valid JSON from {path}: {exc}") from exc
+
+
+def remove_existing(path: Path) -> None:
+    if not path.exists():
+        return
+    try:
+        if path.is_dir():
+            shutil.rmtree(path)
+        else:
+            path.unlink()
+    except OSError as exc:
+        raise RuntimeError(f"Could not remove stale export path {path}: {exc}") from exc
 
 
 def write_json(path: Path, data) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=2, sort_keys=False) + "\n", encoding="utf-8")
+    try:
+        with path.open("w", encoding="utf-8") as fh:
+            fh.write(json.dumps(data, indent=2, sort_keys=False) + "\n")
+    except OSError as exc:
+        raise RuntimeError(f"Could not write exported JSON to {path}: {exc}") from exc
 
 
 def strip_auth_fields(value):
@@ -131,6 +152,10 @@ def find_local_package_hints(settings) -> list[str]:
     return hints
 
 
+def info(message: str) -> None:
+    sys.stdout.write(f"{message}\n")
+
+
 def drop_local_package_entries(settings):
     if not isinstance(settings, dict):
         return settings
@@ -149,30 +174,27 @@ def drop_local_package_entries(settings):
 
     settings["packages"] = filtered
     if dropped:
-        print("Excluded local package paths from exported public config:")
+        info("Excluded local package paths from exported public config:")
         for source in dropped:
-            print(f"  - {source}")
-        print("Set PI_SETUP_INCLUDE_LOCAL_PACKAGES=1 to keep them during export.")
+            info(f"  - {source}")
+        info("Set PI_SETUP_INCLUDE_LOCAL_PACKAGES=1 to keep them during export.")
     return settings
 
 
 def main() -> int:
     if len(sys.argv) != 3:
-        print("Usage: export_portable_pi_config.py PI_DIR OUT_DIR", file=sys.stderr)
+        sys.stderr.write("Usage: export_portable_pi_config.py PI_DIR OUT_DIR\n")
         return 2
 
     pi_dir = Path(sys.argv[1]).expanduser()
     out_dir = Path(sys.argv[2]).expanduser()
 
     for stale_path in STALE_LOCAL_ONLY_PATHS:
-        destination = out_dir / stale_path
-        if destination.exists():
-            if destination.is_dir():
-                shutil.rmtree(destination)
-            else:
-                destination.unlink()
+        remove_existing(out_dir / stale_path)
 
     settings_path = pi_dir / "settings.json"
+    settings_destination = out_dir / "settings.json"
+    remove_existing(settings_destination)
     if settings_path.exists():
         settings = load_json(settings_path)
         portable_settings = {
@@ -182,28 +204,29 @@ def main() -> int:
         }
         if os.environ.get("PI_SETUP_INCLUDE_LOCAL_PACKAGES") != "1":
             portable_settings = drop_local_package_entries(portable_settings)
-        write_json(out_dir / "settings.json", portable_settings)
+        write_json(settings_destination, portable_settings)
 
         local_packages = find_local_package_hints(portable_settings)
         if local_packages:
-            print("Warning: settings.json contains local package paths that must exist on the target machine:")
+            info("Warning: settings.json contains local package paths that must exist on the target machine:")
             for source in local_packages:
-                print(f"  - {source}")
+                info(f"  - {source}")
 
     for file_name in PORTABLE_FILES:
         source = pi_dir / file_name
+        destination = out_dir / file_name
+        remove_existing(destination)
         if source.exists():
-            destination = out_dir / file_name
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(source, destination)
 
     models_path = pi_dir / "models.json"
-    if models_path.exists():
-        write_json(out_dir / "models.json", sanitize_models(load_json(models_path)))
+    models = load_json(models_path) if models_path.exists() else {"providers": {}}
+    write_json(out_dir / "models.json", sanitize_models(models))
 
     mcp_path = pi_dir / "mcp.json"
-    if mcp_path.exists():
-        write_json(out_dir / "mcp.json", sanitize_mcp_config(load_json(mcp_path)))
+    mcp_config = load_json(mcp_path) if mcp_path.exists() else {"imports": [], "mcpServers": {}}
+    write_json(out_dir / "mcp.json", sanitize_mcp_config(mcp_config))
 
     handoff_path = out_dir / "pi-handoff-config.json"
     if handoff_path.exists():
@@ -212,15 +235,16 @@ def main() -> int:
     for directory_name in PORTABLE_DIRS:
         source = pi_dir / directory_name
         destination = out_dir / directory_name
+        # Reconcile removals as well as additions. Otherwise a deleted live
+        # resource directory remains forever in the exported snapshot.
+        remove_existing(destination)
         if not source.exists():
             continue
-        if destination.exists():
-            shutil.rmtree(destination)
         shutil.copytree(source, destination, ignore=shutil.ignore_patterns(*IGNORE_PATTERNS))
         if not any(destination.rglob("*")):
-            shutil.rmtree(destination)
+            remove_existing(destination)
 
-    print(f"Exported portable Pi config from {pi_dir} to {out_dir}")
+    info(f"Exported portable Pi config from {pi_dir} to {out_dir}")
     return 0
 
 

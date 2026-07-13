@@ -15,7 +15,7 @@ It also acts as a public index of the Pi extensions I use and maintain. See [`do
 - empty `models.json` placeholder so provider/model choices are not forced
 - empty `mcp.json` placeholder so MCP servers/auth are not forced
 - prompt templates in `prompts/`
-- local `extensions/`, `skills/`, and `themes/` if present
+- authored local `extensions/`, `skills/`, and `themes/` if present
 - auth-free extension preference files, currently:
   - `pi-handoff-config.json`
   - `pi-usage-bar/config.json`
@@ -105,7 +105,9 @@ powershell -ExecutionPolicy Bypass -File .\Export.ps1
 powershell -ExecutionPolicy Bypass -File .\SecurityScan.ps1
 ```
 
-Review the diff before committing.
+Review the diff before committing. Export reconciles deleted resource directories and
+excludes installer-managed integration shims such as Herdr's
+`herdr-agent-state.ts`; reinstall those integrations separately on each machine.
 
 ## Local package paths
 
@@ -141,6 +143,7 @@ security-scan.sh                 # macOS/Linux security-scan wrapper
 SecurityScan.ps1                 # PowerShell security-scan wrapper
 config/                          # portable Pi configuration snapshot
 scripts/export_portable_pi_config.py
+tests/test_export_portable_pi_config.py # portable export regression tests
 scripts/check_local_package_paths.py
 scripts/security_scan.py          # conservative pre-commit/publication scan
 docs/security.md

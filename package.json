@@ -8,7 +8,8 @@
     "pi-setup": "./bin/pi-setup.js"
   },
   "scripts": {
-    "check": "node --check bin/pi-setup.js && node bin/pi-setup.js --scan && npm pack --dry-run",
+    "check": "node --check bin/pi-setup.js && python3 -m unittest discover -s tests -p 'test_*.py' && node bin/pi-setup.js --scan && npm pack --dry-run",
+    "test": "python3 -m unittest discover -s tests -p 'test_*.py'",
     "scan": "node bin/pi-setup.js --scan",
     "dry-run": "node bin/pi-setup.js --dry-run --no-update",
     "preversion": "npm run check"
@@ -23,7 +24,9 @@
     "bin/",
     "config/",
     "docs/",
-    "scripts/",
+    "scripts/check_local_package_paths.py",
+    "scripts/export_portable_pi_config.py",
+    "scripts/security_scan.py",
     "README.md",
     "LICENSE"
   ],

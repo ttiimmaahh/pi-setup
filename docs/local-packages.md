@@ -53,6 +53,11 @@ Good when the package is published to npm:
 "npm:example-pi-package"
 ```
 
+Unversioned specs follow the latest compatible published package when Pi reconciles
+updates. Use a versioned spec such as `npm:example-pi-package@1.2.3` for
+reproducible installs; pinned npm specs are skipped by bulk
+`pi update --extensions` runs.
+
 Trade-off: less convenient for local development versions.
 
 ### Replace with git package specs

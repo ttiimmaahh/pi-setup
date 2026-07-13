@@ -17,7 +17,9 @@
     "npm:pi-web-access",
     "npm:pi-usage-bar",
     "npm:pi-intercom",
-    "npm:pi-prompt-template-model"
+    "npm:pi-prompt-template-model",
+    "npm:@juicesharp/rpiv-todo",
+    "npm:@mobrienv/pi-tidy-tools"
   ],
   "hideThinkingBlock": false,
   "defaultThinkingLevel": "high",
