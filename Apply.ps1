@@ -79,6 +79,25 @@ function Install-Directory {
   Write-Host "  installed $Relative/"
 }
 
+function Install-WebToolsDependencies {
+  $extensionDir = Join-Path $PiDir "extensions/web-tools"
+  $lockfile = Join-Path $extensionDir "package-lock.json"
+  if (-not (Test-Path -LiteralPath $lockfile -PathType Leaf)) {
+    return
+  }
+
+  $npmCommand = Get-Command npm -ErrorAction SilentlyContinue
+  if ($null -eq $npmCommand) {
+    throw "npm is required to install the web-tools extension dependencies."
+  }
+
+  Write-Host "  installing extensions/web-tools dependencies"
+  & $npmCommand.Source ci --omit=dev --omit=peer --ignore-scripts --prefix $extensionDir
+  if ($LASTEXITCODE -ne 0) {
+    throw "Failed to install the web-tools extension dependencies."
+  }
+}
+
 if (-not (Test-Path -LiteralPath $SourceDir -PathType Container)) {
   throw "No Pi config snapshot found at $SourceDir. Run .\Export.ps1 on a configured machine first."
 }
@@ -100,6 +119,7 @@ Install-Directory "prompts"
 Install-Directory "extensions"
 Install-Directory "skills"
 Install-Directory "themes"
+Install-WebToolsDependencies
 
 $python = Get-PythonCommand
 $localPathChecker = Join-Path $ScriptDir "scripts/check_local_package_paths.py"

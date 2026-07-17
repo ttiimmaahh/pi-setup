@@ -64,6 +64,21 @@ install_dir extensions
 install_dir skills
 install_dir themes
 
+install_web_tools_dependencies() {
+  local extension_dir="$PI_DIR/extensions/web-tools"
+  [[ -f "$extension_dir/package-lock.json" ]] || return 0
+
+  if ! command -v npm >/dev/null 2>&1; then
+    echo "npm is required to install the web-tools extension dependencies." >&2
+    exit 1
+  fi
+
+  echo "  installing extensions/web-tools dependencies"
+  npm ci --omit=dev --omit=peer --ignore-scripts --prefix "$extension_dir"
+}
+
+install_web_tools_dependencies
+
 python3 "$SCRIPT_DIR/scripts/check_local_package_paths.py" "$SOURCE_DIR/settings.json" || true
 
 if command -v pi >/dev/null 2>&1; then

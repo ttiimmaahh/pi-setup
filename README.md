@@ -15,7 +15,8 @@ It also acts as a public index of the Pi extensions I use and maintain. See [`do
 - empty `models.json` placeholder so provider/model choices are not forced
 - empty `mcp.json` placeholder so MCP servers/auth are not forced
 - prompt templates in `prompts/`
-- authored local `extensions/`, `skills/`, and `themes/` if present
+- authored or vendored `extensions/`, `skills/`, and `themes/` if present
+- locked runtime dependencies for the vendored `web-tools` extension (installed with `npm ci`)
 - auth-free extension preference files, currently:
   - `pi-handoff-config.json`
   - `pi-usage-bar/config.json`

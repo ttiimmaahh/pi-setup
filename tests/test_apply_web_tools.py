@@ -1,0 +1,130 @@
+import json
+import os
+import subprocess
+import tempfile
+import unittest
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+class WebToolsApplyTests(unittest.TestCase):
+    def setUp(self):
+        self.tempdir = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tempdir.cleanup)
+        self.workdir = Path(self.tempdir.name)
+        self.bin_dir = self.workdir / "bin"
+        self.bin_dir.mkdir()
+        self.npm_log = self.workdir / "npm-args.txt"
+
+    def write_command(self, name: str, body: str) -> Path:
+        command = self.bin_dir / name
+        command.write_text(f"#!/bin/sh\n{body}\n", encoding="utf-8")
+        command.chmod(0o755)
+        return command
+
+    def environment(self) -> dict[str, str]:
+        env = os.environ.copy()
+        env["PATH"] = f"{self.bin_dir}{os.pathsep}{env['PATH']}"
+        env["NPM_LOG"] = str(self.npm_log)
+        return env
+
+    def install_successful_fake_npm(self) -> None:
+        self.write_command("npm", 'printf "%s\\n" "$@" > "$NPM_LOG"')
+
+    def assert_npm_ci_arguments(self, extension_dir: Path) -> None:
+        self.assertEqual(
+            self.npm_log.read_text(encoding="utf-8").splitlines(),
+            [
+                "ci",
+                "--omit=dev",
+                "--omit=peer",
+                "--ignore-scripts",
+                "--prefix",
+                str(extension_dir),
+            ],
+        )
+
+    def test_node_apply_copies_web_tools_and_installs_dependencies(self):
+        self.install_successful_fake_npm()
+        target = self.workdir / "target with spaces"
+
+        result = subprocess.run(
+            ["node", str(ROOT / "bin/pi-setup.js"), "--target", str(target), "--no-update"],
+            cwd=ROOT,
+            env=self.environment(),
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        extension_dir = target / "extensions/web-tools"
+        self.assertTrue((extension_dir / "index.ts").is_file())
+        self.assertTrue((extension_dir / "package-lock.json").is_file())
+        try:
+            settings = json.loads((target / "settings.json").read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as error:
+            self.fail(f"installed settings.json is unreadable: {error}")
+        self.assertNotIn("npm:pi-web-access", settings["packages"])
+        self.assert_npm_ci_arguments(extension_dir)
+
+    def test_node_dry_run_does_not_write_or_invoke_npm(self):
+        self.install_successful_fake_npm()
+        target = self.workdir / "dry-run-target"
+
+        result = subprocess.run(
+            ["node", str(ROOT / "bin/pi-setup.js"), "--target", str(target), "--dry-run", "--no-update"],
+            cwd=ROOT,
+            env=self.environment(),
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse(target.exists())
+        self.assertFalse(self.npm_log.exists())
+        self.assertIn("install extensions/web-tools dependencies", result.stdout)
+
+    def test_node_apply_fails_when_dependency_install_fails(self):
+        self.write_command("npm", "exit 23")
+        target = self.workdir / "failed-target"
+
+        result = subprocess.run(
+            ["node", str(ROOT / "bin/pi-setup.js"), "--target", str(target), "--no-update"],
+            cwd=ROOT,
+            env=self.environment(),
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("failed to install the web-tools extension dependencies", result.stderr)
+
+    def test_shell_apply_installs_web_tools_dependencies(self):
+        self.install_successful_fake_npm()
+        self.write_command("pi", "exit 1")
+        target = self.workdir / "shell target with spaces"
+        env = self.environment()
+        env["PI_CODING_AGENT_DIR"] = str(target)
+
+        result = subprocess.run(
+            ["bash", str(ROOT / "apply.sh")],
+            cwd=ROOT,
+            env=env,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        extension_dir = target / "extensions/web-tools"
+        self.assertTrue((extension_dir / "index.ts").is_file())
+        self.assert_npm_ci_arguments(extension_dir)
+
+
+if __name__ == "__main__":
+    unittest.main()

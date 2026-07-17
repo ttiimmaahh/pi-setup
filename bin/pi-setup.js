@@ -156,11 +156,44 @@ function shellQuote(value) {
   return `'${value.replace(/'/g, `'\\''`)}'`;
 }
 
+function installWebToolsDependencies(targetRoot, dryRun) {
+  const extensionDir = path.join(targetRoot, "extensions", "web-tools");
+  const lockfile = dryRun
+    ? path.join(sourceDir, "extensions", "web-tools", "package-lock.json")
+    : path.join(extensionDir, "package-lock.json");
+  if (!exists(lockfile)) return;
+
+  console.log("  install extensions/web-tools dependencies");
+  if (dryRun) return;
+
+  if (!commandExists("npm")) {
+    throw new Error("npm is required to install the web-tools extension dependencies");
+  }
+
+  const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
+  const result = spawnSync(
+    npmCommand,
+    ["ci", "--omit=dev", "--omit=peer", "--ignore-scripts", "--prefix", extensionDir],
+    { stdio: "inherit" },
+  );
+  if (result.error) throw result.error;
+  if (result.status !== 0) {
+    throw new Error("failed to install the web-tools extension dependencies");
+  }
+}
+
 function warnLocalPackagePaths() {
   const settingsPath = path.join(sourceDir, "settings.json");
   if (!exists(settingsPath)) return;
 
-  const settings = JSON.parse(fs.readFileSync(settingsPath, "utf8"));
+  let settings;
+  try {
+    settings = JSON.parse(fs.readFileSync(settingsPath, "utf8"));
+  } catch (error) {
+    console.warn(`  warning: could not inspect local package paths: ${error.message}`);
+    return;
+  }
+
   const localSources = [];
   for (const entry of settings.packages || []) {
     const source = typeof entry === "string" ? entry : entry && typeof entry.source === "string" ? entry.source : null;
@@ -232,6 +265,7 @@ function applySetup(args) {
 
   for (const relative of portableFiles) installFile(relative, targetRoot, backupDir, args.dryRun);
   for (const relative of portableDirs) installDir(relative, targetRoot, backupDir, args.dryRun);
+  installWebToolsDependencies(targetRoot, args.dryRun);
 
   warnLocalPackagePaths();
   reconcilePiPackages(args.dryRun, args.update);

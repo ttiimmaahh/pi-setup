@@ -1,11 +1,11 @@
 # Pi extensions I use
 
-This setup doubles as a curated index of public Pi extensions I use day to day. The config in [`../config/settings.json`](../config/settings.json) installs or references these packages where appropriate.
+This setup doubles as a curated index of public Pi extensions I use day to day. The config in [`../config/settings.json`](../config/settings.json) installs packages, while authored or vendored loose extensions live under [`../config/extensions/`](../config/extensions/) and are copied into Pi's global extension directory by the apply scripts.
 
 ## My public Pi extensions
 
 | Extension | Install/reference | What it does |
-|---|---|---|
+| --- | --- | --- |
 | [`@ttiimmaahh/pi-handoff`](https://github.com/ttiimmaahh/pi-handoff) | `npm:@ttiimmaahh/pi-handoff` | Proactive context handoff for Pi. At a context-usage threshold, it can write a structured session handoff and offer to reload it in a new session. |
 | [`pi-sap-aicore`](https://github.com/ttiimmaahh/pi-sap-aicore) | `npm:pi-sap-aicore` | SAP AI Core provider for Pi, including orchestration and foundation model support. |
 | [`pi-usage-bar`](https://github.com/ttiimmaahh/pi-usage-bar) | `npm:pi-usage-bar` | Footer/statusline plus local usage ledger for per-session and per-project token/cost attribution. |
@@ -15,21 +15,26 @@ This setup doubles as a curated index of public Pi extensions I use day to day. 
 These are third-party or separately maintained packages currently referenced by `config/settings.json`:
 
 | Package | Purpose in this setup |
-|---|---|
+| --- | --- |
 | `npm:@plannotator/pi-extension` | Plannotator integration, with package skills disabled in this config. |
 | `npm:pi-hermes-memory` | Persistent memory tooling. Runtime memory data is **not** stored in this repo. |
 | `npm:pi-mcp-adapter` | MCP integration support. MCP auth/token state is **not** stored in this repo. |
 | `npm:pi-lens` | LSP/AST/code-intelligence tools. |
 | `npm:pi-context` | Context checkpoint/timeline/compaction tools. |
 | `npm:pi-subagents` | Subagent orchestration tools. |
-| `npm:pi-bar` | Pi UI/status enhancement package. |
+| [`npm:pi-skill-toggle`](https://github.com/Whamp/pi-skill-toggle) | `/skills-toggle` TUI for keeping skills enabled, hiding them from model auto-invocation, or disabling them completely. |
 | `npm:@juicesharp/rpiv-ask-user-question` | Structured question UI/tool support. |
 | `npm:@juicesharp/rpiv-btw` | Additional Pi workflow/tooling package. |
-| `npm:pi-web-access` | Web access/research tools. |
 | `npm:pi-intercom` | Live supervisor decisions, progress updates, and grouped result delivery for pi-subagents. |
 | `npm:pi-prompt-template-model` | Reusable prompt-template workflows with model/thinking/skill/subagent frontmatter. |
 | `npm:@juicesharp/rpiv-todo` | Persistent model-managed task lists with dependency tracking and a live Pi overlay. |
 | `npm:@mobrienv/pi-tidy-tools` | Compact, reason-first rendering for Pi's built-in tools, with configurable layouts and diff summaries. |
+
+## Vendored loose extensions
+
+| Extension | Source | What it does |
+| --- | --- | --- |
+| [`web-tools`](../config/extensions/web-tools/) | [dmmulroy/.dotfiles at `f450e808`](https://github.com/dmmulroy/.dotfiles/tree/f450e80819c08bbede9fd71b35d01dacc43499a2/home/.pi/agent/extensions/web-tools) | Registers `webfetch` and `websearch`. The apply workflows install its locked runtime dependencies after copying it into `~/.pi/agent/extensions/web-tools/`. |
 
 ## Generated and local-only integrations
 
