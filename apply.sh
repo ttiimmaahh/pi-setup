@@ -8,6 +8,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOURCE_DIR="$SCRIPT_DIR/config"
 PI_DIR="${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}"
+PI_LENS_CONFIG_PATH="${PI_LENS_CONFIG_PATH:-$HOME/.pi-lens/config.json}"
 BACKUP_DIR="$PI_DIR/backups/$(date +%Y%m%d-%H%M%S)"
 
 if [[ ! -d "$SOURCE_DIR" ]]; then
@@ -52,6 +53,20 @@ install_dir() {
   echo "  installed $relative/"
 }
 
+install_pi_lens_config() {
+  local source="$SOURCE_DIR/pi-lens/config.json"
+  [[ -f "$source" ]] || return 0
+
+  if [[ -e "$PI_LENS_CONFIG_PATH" ]]; then
+    mkdir -p "$BACKUP_DIR/pi-lens"
+    cp -a "$PI_LENS_CONFIG_PATH" "$BACKUP_DIR/pi-lens/config.json"
+  fi
+
+  mkdir -p "$(dirname "$PI_LENS_CONFIG_PATH")"
+  cp "$source" "$PI_LENS_CONFIG_PATH"
+  echo "  installed Pi Lens config -> $PI_LENS_CONFIG_PATH"
+}
+
 install_file settings.json
 install_file keybindings.json
 install_file models.json
@@ -63,6 +78,7 @@ install_dir prompts
 install_dir extensions
 install_dir skills
 install_dir themes
+install_pi_lens_config
 
 install_web_tools_dependencies() {
   local extension_dir="$PI_DIR/extensions/web-tools"

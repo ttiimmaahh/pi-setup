@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
-class WebToolsApplyTests(unittest.TestCase):
+class PortableApplyTests(unittest.TestCase):
     def setUp(self):
         self.tempdir = tempfile.TemporaryDirectory()
         self.addCleanup(self.tempdir.cleanup)
@@ -17,6 +17,7 @@ class WebToolsApplyTests(unittest.TestCase):
         self.bin_dir = self.workdir / "bin"
         self.bin_dir.mkdir()
         self.npm_log = self.workdir / "npm-args.txt"
+        self.pi_lens_config = self.workdir / "pi-lens/config.json"
 
     def write_command(self, name: str, body: str) -> Path:
         command = self.bin_dir / name
@@ -28,7 +29,14 @@ class WebToolsApplyTests(unittest.TestCase):
         env = os.environ.copy()
         env["PATH"] = f"{self.bin_dir}{os.pathsep}{env['PATH']}"
         env["NPM_LOG"] = str(self.npm_log)
+        env["PI_LENS_CONFIG_PATH"] = str(self.pi_lens_config)
         return env
+
+    def read_json(self, path: Path):
+        try:
+            return json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as error:
+            self.fail(f"{path} is unreadable: {error}")
 
     def install_successful_fake_npm(self) -> None:
         self.write_command("npm", 'printf "%s\\n" "$@" > "$NPM_LOG"')
@@ -63,11 +71,9 @@ class WebToolsApplyTests(unittest.TestCase):
         extension_dir = target / "extensions/web-tools"
         self.assertTrue((extension_dir / "index.ts").is_file())
         self.assertTrue((extension_dir / "package-lock.json").is_file())
-        try:
-            settings = json.loads((target / "settings.json").read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError) as error:
-            self.fail(f"installed settings.json is unreadable: {error}")
+        settings = self.read_json(target / "settings.json")
         self.assertNotIn("npm:pi-web-access", settings["packages"])
+        self.assertEqual(self.read_json(self.pi_lens_config), {"format": {"enabled": False}})
         self.assert_npm_ci_arguments(extension_dir)
 
     def test_node_dry_run_does_not_write_or_invoke_npm(self):
@@ -85,7 +91,9 @@ class WebToolsApplyTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertFalse(target.exists())
+        self.assertFalse(self.pi_lens_config.exists())
         self.assertFalse(self.npm_log.exists())
+        self.assertIn("install Pi Lens config", result.stdout)
         self.assertIn("install extensions/web-tools dependencies", result.stdout)
 
     def test_node_apply_fails_when_dependency_install_fails(self):
@@ -123,7 +131,29 @@ class WebToolsApplyTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         extension_dir = target / "extensions/web-tools"
         self.assertTrue((extension_dir / "index.ts").is_file())
+        self.assertEqual(self.read_json(self.pi_lens_config), {"format": {"enabled": False}})
         self.assert_npm_ci_arguments(extension_dir)
+
+    def test_node_apply_backs_up_existing_pi_lens_config(self):
+        self.install_successful_fake_npm()
+        target = self.workdir / "backup-target"
+        self.pi_lens_config.parent.mkdir(parents=True)
+        self.pi_lens_config.write_text('{"format":{"enabled":true}}\n', encoding="utf-8")
+
+        result = subprocess.run(
+            ["node", str(ROOT / "bin/pi-setup.js"), "--target", str(target), "--no-update"],
+            cwd=ROOT,
+            env=self.environment(),
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        backups = list((target / "backups").glob("*/pi-lens/config.json"))
+        self.assertEqual(len(backups), 1)
+        self.assertEqual(self.read_json(backups[0]), {"format": {"enabled": True}})
+        self.assertEqual(self.read_json(self.pi_lens_config), {"format": {"enabled": False}})
 
 
 if __name__ == "__main__":

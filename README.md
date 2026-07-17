@@ -8,7 +8,7 @@ It also acts as a public index of the Pi extensions I use and maintain. See [`do
 
 ## What this restores
 
-`./apply.sh` copies the portable config snapshot from `config/` into `~/.pi/agent/`:
+`./apply.sh` applies the portable snapshot from `config/`. Most resources go into `~/.pi/agent/`; the Pi Lens policy goes to `~/.pi-lens/config.json`:
 
 - `settings.json` package/resource configuration
 - `keybindings.json`
@@ -17,6 +17,7 @@ It also acts as a public index of the Pi extensions I use and maintain. See [`do
 - prompt templates in `prompts/`
 - authored or vendored `extensions/`, `skills/`, and `themes/` if present
 - locked runtime dependencies for the vendored `web-tools` extension (installed with `npm ci`)
+- global Pi Lens config at `~/.pi-lens/config.json`, keeping LSP/code intelligence enabled while disabling automatic formatting
 - auth-free extension preference files, currently:
   - `pi-handoff-config.json`
   - `pi-usage-bar/config.json`
@@ -57,6 +58,12 @@ Skip package reconciliation:
 
 ```bash
 npx --yes github:ttiimmaahh/pi-setup -- --no-update
+```
+
+Override the Pi Lens config destination when testing or using a non-default home layout:
+
+```bash
+PI_LENS_CONFIG_PATH=/custom/path/config.json npx --yes github:ttiimmaahh/pi-setup
 ```
 
 Manual clone/apply still works:

@@ -40,6 +40,9 @@ Options:
   --scan         Run the repository security scan, then exit
   -h, --help     Show this help
 
+Environment:
+  PI_LENS_CONFIG_PATH  Override ~/.pi-lens/config.json destination
+
 Auth is never restored by this setup. Re-run /login or configure API-key environment variables on each machine.`);
 }
 
@@ -141,6 +144,26 @@ function installDir(relative, targetRoot, backupDir, dryRun) {
   fs.rmSync(target, { recursive: true, force: true });
   fs.mkdirSync(path.dirname(target), { recursive: true });
   fs.cpSync(source, target, { recursive: true, force: true });
+}
+
+function installPiLensConfig(configPath, backupDir, dryRun) {
+  const source = path.join(sourceDir, "pi-lens", "config.json");
+  if (!exists(source) || !fs.statSync(source).isFile()) return;
+
+  const target = path.resolve(expandHome(configPath));
+  const backup = path.join(backupDir, "pi-lens", "config.json");
+  if (exists(target)) {
+    console.log(`  backup Pi Lens config -> ${backup}`);
+  }
+  console.log(`  install Pi Lens config -> ${target}`);
+
+  if (dryRun) return;
+  if (exists(target)) {
+    fs.mkdirSync(path.dirname(backup), { recursive: true });
+    fs.copyFileSync(target, backup);
+  }
+  fs.mkdirSync(path.dirname(target), { recursive: true });
+  fs.copyFileSync(source, target);
 }
 
 function commandExists(command) {
@@ -255,6 +278,7 @@ function applySetup(args) {
 
   const targetRoot = path.resolve(expandHome(args.target));
   const backupDir = path.join(targetRoot, "backups", timestamp());
+  const piLensConfigPath = process.env.PI_LENS_CONFIG_PATH || path.join(os.homedir(), ".pi-lens", "config.json");
 
   console.log(`Pi setup: applying portable config from ${sourceDir}`);
   console.log(`Target: ${targetRoot}`);
@@ -265,6 +289,7 @@ function applySetup(args) {
 
   for (const relative of portableFiles) installFile(relative, targetRoot, backupDir, args.dryRun);
   for (const relative of portableDirs) installDir(relative, targetRoot, backupDir, args.dryRun);
+  installPiLensConfig(piLensConfigPath, backupDir, args.dryRun);
   installWebToolsDependencies(targetRoot, args.dryRun);
 
   warnLocalPackagePaths();

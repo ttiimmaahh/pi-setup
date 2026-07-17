@@ -15,6 +15,7 @@ $ErrorActionPreference = "Stop"
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $SourceDir = Join-Path $ScriptDir "config"
 $PiDir = if ($env:PI_CODING_AGENT_DIR) { $env:PI_CODING_AGENT_DIR } else { Join-Path $HOME ".pi/agent" }
+$PiLensConfigPath = if ($env:PI_LENS_CONFIG_PATH) { $env:PI_LENS_CONFIG_PATH } else { Join-Path $HOME ".pi-lens/config.json" }
 $BackupDir = Join-Path $PiDir ("backups/" + (Get-Date -Format "yyyyMMdd-HHmmss"))
 
 function Get-PythonCommand {
@@ -79,6 +80,23 @@ function Install-Directory {
   Write-Host "  installed $Relative/"
 }
 
+function Install-PiLensConfig {
+  $source = Join-Path $SourceDir "pi-lens/config.json"
+  if (-not (Test-Path -LiteralPath $source -PathType Leaf)) {
+    return
+  }
+
+  if (Test-Path -LiteralPath $PiLensConfigPath) {
+    $backup = Join-Path $BackupDir "pi-lens/config.json"
+    New-Item -ItemType Directory -Force -Path (Split-Path -Parent $backup) | Out-Null
+    Copy-Item -LiteralPath $PiLensConfigPath -Destination $backup -Force
+  }
+
+  New-Item -ItemType Directory -Force -Path (Split-Path -Parent $PiLensConfigPath) | Out-Null
+  Copy-Item -LiteralPath $source -Destination $PiLensConfigPath -Force
+  Write-Host "  installed Pi Lens config -> $PiLensConfigPath"
+}
+
 function Install-WebToolsDependencies {
   $extensionDir = Join-Path $PiDir "extensions/web-tools"
   $lockfile = Join-Path $extensionDir "package-lock.json"
@@ -119,6 +137,7 @@ Install-Directory "prompts"
 Install-Directory "extensions"
 Install-Directory "skills"
 Install-Directory "themes"
+Install-PiLensConfig
 Install-WebToolsDependencies
 
 $python = Get-PythonCommand
