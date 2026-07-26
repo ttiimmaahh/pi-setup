@@ -20,9 +20,9 @@ These are third-party or separately maintained packages currently referenced by 
 | `npm:pi-hermes-memory` | Persistent memory tooling. Runtime memory data is **not** stored in this repo. |
 | `npm:pi-mcp-adapter` | MCP integration support. MCP auth/token state is **not** stored in this repo. |
 | `npm:pi-lens` | LSP/AST/code-intelligence tools. |
-| `npm:pi-context` | Context checkpoint/timeline/compaction tools. |
 | `npm:pi-subagents` | Subagent orchestration tools. |
 | [`npm:pi-skill-toggle`](https://github.com/Whamp/pi-skill-toggle) | `/skills-toggle` TUI for keeping skills enabled, hiding them from model auto-invocation, or disabling them completely. |
+| [`npm:@codexstar/pi-listen@7.2.2`](https://github.com/codexstar69/pi-listen) | Local voice dictation, configured to use Parakeet TDT v3. |
 | `npm:@juicesharp/rpiv-ask-user-question` | Structured question UI/tool support. |
 | `npm:@juicesharp/rpiv-btw` | Additional Pi workflow/tooling package. |
 | `npm:pi-intercom` | Live supervisor decisions, progress updates, and grouped result delivery for pi-subagents. |

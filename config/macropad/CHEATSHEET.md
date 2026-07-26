@@ -27,7 +27,7 @@ Physical orientation: USB cable away from you, knob on the right.
 
 - Dictation never submits automatically; review or edit the transcript first.
 - The voice button now sends `Ctrl+Shift+V` for a Pi toggle-mode trial.
-- Pi uses local Parakeet TDT v2 through `@codexstar/pi-listen`.
+- Pi uses local Parakeet TDT v3 through `@codexstar/pi-listen`.
 - Claude Code's native `/voice hold` is not triggered by this temporary mapping.
 
 ## Configuration

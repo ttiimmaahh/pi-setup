@@ -7,9 +7,9 @@
     "npm:pi-hermes-memory",
     "npm:pi-mcp-adapter",
     "npm:pi-lens",
-    "npm:pi-context",
     "npm:pi-subagents",
     "npm:pi-skill-toggle",
+    "npm:@codexstar/pi-listen@7.2.2",
     "npm:@juicesharp/rpiv-ask-user-question",
     "npm:@juicesharp/rpiv-btw",
     "npm:pi-sap-aicore",
@@ -22,5 +22,24 @@
   ],
   "hideThinkingBlock": false,
   "defaultThinkingLevel": "high",
-  "theme": "dark"
+  "theme": "dark",
+  "voice": {
+    "version": 2,
+    "enabled": true,
+    "language": "en",
+    "scope": "global",
+    "backend": "local",
+    "localModel": "parakeet-v3",
+    "toggleShortcut": "ctrl+shift+v",
+    "ttsEnabled": false,
+    "ttsAutoSpeak": false,
+    "autoSubmitOnSpeak": false,
+    "holdThresholdMs": 700,
+    "onboarding": {
+      "completed": true,
+      "schemaVersion": 2,
+      "completedAt": "2026-07-26T17:20:00Z",
+      "source": "setup-command"
+    }
+  }
 }
