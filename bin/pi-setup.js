@@ -22,6 +22,8 @@ const portableFiles = [
 ];
 
 const portableDirs = ["prompts", "extensions", "skills", "themes"];
+const macropadSourceDir = path.join(sourceDir, "macropad");
+const macropadTargetDir = path.join(os.homedir(), ".config", "ch57x-keyboard-tool");
 
 function usage() {
   console.log(`pi-setup
@@ -144,6 +146,30 @@ function installDir(relative, targetRoot, backupDir, dryRun) {
   fs.rmSync(target, { recursive: true, force: true });
   fs.mkdirSync(path.dirname(target), { recursive: true });
   fs.cpSync(source, target, { recursive: true, force: true });
+}
+
+function installMacropadAssets(backupDir, dryRun) {
+  if (!exists(macropadSourceDir)) return;
+
+  for (const filename of ["coding-voice.yaml", "CHEATSHEET.md"]) {
+    const source = path.join(macropadSourceDir, filename);
+    if (!exists(source)) continue;
+
+    const target = path.join(macropadTargetDir, filename);
+    const backup = path.join(backupDir, "external", "ch57x-keyboard-tool", filename);
+    if (exists(target)) {
+      console.log(`  backup ~/.config/ch57x-keyboard-tool/${filename}`);
+      if (!dryRun) {
+        fs.mkdirSync(path.dirname(backup), { recursive: true });
+        fs.copyFileSync(target, backup);
+      }
+    }
+    console.log(`  install ~/.config/ch57x-keyboard-tool/${filename}`);
+    if (!dryRun) {
+      fs.mkdirSync(macropadTargetDir, { recursive: true });
+      fs.copyFileSync(source, target);
+    }
+  }
 }
 
 function installPiLensConfig(configPath, backupDir, dryRun) {
@@ -291,6 +317,7 @@ function applySetup(args) {
   for (const relative of portableDirs) installDir(relative, targetRoot, backupDir, args.dryRun);
   installPiLensConfig(piLensConfigPath, backupDir, args.dryRun);
   installWebToolsDependencies(targetRoot, args.dryRun);
+  installMacropadAssets(backupDir, args.dryRun);
 
   warnLocalPackagePaths();
   reconcilePiPackages(args.dryRun, args.update);

@@ -18,6 +18,7 @@ It also acts as a public index of the Pi extensions I use and maintain. See [`do
 - authored or vendored `extensions/`, `skills/`, and `themes/` if present
 - locked runtime dependencies for the vendored `web-tools` extension (installed with `npm ci`)
 - global Pi Lens config at `~/.pi-lens/config.json`, keeping LSP/code intelligence enabled while disabling automatic formatting
+- CH57x macro-pad profile and `/macropad` cheat sheet under `~/.config/ch57x-keyboard-tool/`
 - auth-free extension preference files, currently:
   - `pi-handoff-config.json`
   - `pi-usage-bar/config.json`
@@ -90,6 +91,18 @@ Then authenticate separately:
 pi
 # run /login, or configure provider API key environment variables
 ```
+
+## Optional voice-dictation macro pad
+
+I use a small **3×2 CH57x macro keyboard with a rotary knob** as a dedicated Pi controller. The included profile maps its voice button to `Ctrl+Shift+V`: tap once to start local dictation in Pi, then tap again to stop and insert the transcript. It also includes shortcuts for submit, escape, interrupt, details, planning mode, model selection, and effort controls.
+
+[![White 3×2 CH57x macro keyboard with rotary knob](docs/assets/ch57x-macro-pad.png)](https://amzn.to/4pMdCj6)
+
+[View the macro keyboard used for this setup on Amazon](https://amzn.to/4pMdCj6).
+
+> **Affiliate disclosure:** These are Amazon affiliate links. I may earn a commission from qualifying purchases at no additional cost to you.
+
+Applying this repo installs the profile and cheat sheet, but deliberately does **not** flash attached hardware automatically. Install `ch57x-keyboard-tool`, connect the controller, review [`docs/macropad.md`](docs/macropad.md), and explicitly upload the profile when ready.
 
 If the Pi CLI is not installed yet:
 

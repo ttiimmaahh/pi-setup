@@ -95,6 +95,21 @@ install_web_tools_dependencies() {
 
 install_web_tools_dependencies
 
+MACROPAD_SOURCE="$SOURCE_DIR/macropad"
+MACROPAD_TARGET="$HOME/.config/ch57x-keyboard-tool"
+if [[ -d "$MACROPAD_SOURCE" ]]; then
+  mkdir -p "$MACROPAD_TARGET"
+  for filename in coding-voice.yaml CHEATSHEET.md; do
+    [[ -f "$MACROPAD_SOURCE/$filename" ]] || continue
+    if [[ -f "$MACROPAD_TARGET/$filename" ]]; then
+      mkdir -p "$BACKUP_DIR/external/ch57x-keyboard-tool"
+      cp "$MACROPAD_TARGET/$filename" "$BACKUP_DIR/external/ch57x-keyboard-tool/$filename"
+    fi
+    cp "$MACROPAD_SOURCE/$filename" "$MACROPAD_TARGET/$filename"
+    echo "  installed ~/.config/ch57x-keyboard-tool/$filename"
+  done
+fi
+
 python3 "$SCRIPT_DIR/scripts/check_local_package_paths.py" "$SOURCE_DIR/settings.json" || true
 
 if command -v pi >/dev/null 2>&1; then

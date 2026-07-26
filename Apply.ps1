@@ -140,6 +140,24 @@ Install-Directory "themes"
 Install-PiLensConfig
 Install-WebToolsDependencies
 
+$macropadSource = Join-Path $SourceDir "macropad"
+$macropadTarget = Join-Path $HOME ".config/ch57x-keyboard-tool"
+if (Test-Path -LiteralPath $macropadSource -PathType Container) {
+  New-Item -ItemType Directory -Force -Path $macropadTarget | Out-Null
+  foreach ($filename in @("coding-voice.yaml", "CHEATSHEET.md")) {
+    $source = Join-Path $macropadSource $filename
+    if (-not (Test-Path -LiteralPath $source -PathType Leaf)) { continue }
+    $target = Join-Path $macropadTarget $filename
+    if (Test-Path -LiteralPath $target -PathType Leaf) {
+      $backupTarget = Join-Path $BackupDir "external/ch57x-keyboard-tool/$filename"
+      New-Item -ItemType Directory -Force -Path (Split-Path -Parent $backupTarget) | Out-Null
+      Copy-Item -LiteralPath $target -Destination $backupTarget -Force
+    }
+    Copy-Item -LiteralPath $source -Destination $target -Force
+    Write-Host "  installed ~/.config/ch57x-keyboard-tool/$filename"
+  }
+}
+
 $python = Get-PythonCommand
 $localPathChecker = Join-Path $ScriptDir "scripts/check_local_package_paths.py"
 $settingsPath = Join-Path $SourceDir "settings.json"

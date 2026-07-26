@@ -1,0 +1,38 @@
+# CH57x 3x2 + knob macropad profile for Claude Code and Pi.
+# Normal orientation: six buttons on the left, knob on the right.
+model: ch57x-2
+orientation: normal
+rows: 3
+columns: 2
+knobs: 1
+
+# All three layers are intentionally identical so the side layer switch
+# cannot disable dictation unexpectedly. The voice button toggles recording:
+# tap once to start, then tap again to stop and transcribe.
+layers:
+  - buttons:
+      - ["ctrl-shift-v", "ctrl-alt-p"]
+      - ["enter", "escape"]
+      - ["ctrl-c", "ctrl-o"]
+    knobs:
+      - ccw: "ctrl-shift-left"
+        press: "ctrl-shift-m"
+        cw: "ctrl-shift-right"
+
+  - buttons:
+      - ["ctrl-shift-v", "ctrl-alt-p"]
+      - ["enter", "escape"]
+      - ["ctrl-c", "ctrl-o"]
+    knobs:
+      - ccw: "ctrl-shift-left"
+        press: "ctrl-shift-m"
+        cw: "ctrl-shift-right"
+
+  - buttons:
+      - ["ctrl-shift-v", "ctrl-alt-p"]
+      - ["enter", "escape"]
+      - ["ctrl-c", "ctrl-o"]
+    knobs:
+      - ccw: "ctrl-shift-left"
+        press: "ctrl-shift-m"
+        cw: "ctrl-shift-right"
