@@ -74,6 +74,10 @@ class PortableApplyTests(unittest.TestCase):
         settings = self.read_json(target / "settings.json")
         self.assertNotIn("npm:pi-web-access", settings["packages"])
         self.assertEqual(self.read_json(self.pi_lens_config), {"format": {"enabled": False}})
+        review_skill = target / "skills/review-global-agents"
+        self.assertTrue((review_skill / "SKILL.md").is_file())
+        self.assertTrue((review_skill / "references/AGENTS.example.md").is_file())
+        self.assertTrue((review_skill / "references/ORCHESTRATION_REVIEW.md").is_file())
         self.assert_npm_ci_arguments(extension_dir)
 
     def test_node_dry_run_does_not_write_or_invoke_npm(self):

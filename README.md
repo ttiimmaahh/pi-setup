@@ -6,6 +6,17 @@ This repo is designed to be safe to use across macOS and Linux machines. It stor
 
 It also acts as a public index of the Pi extensions I use and maintain. See [`docs/extensions.md`](docs/extensions.md).
 
+Reusable, provider-neutral instruction templates are available in the review
+skill's bundled
+[`AGENTS.example.md`](config/skills/review-global-agents/references/AGENTS.example.md)
+and [`docs/STACK_CONVENTIONS.example.md`](docs/STACK_CONVENTIONS.example.md). They are
+examples to adapt, not files automatically installed as global instructions.
+
+The installed `/skill:review-global-agents` workflow audits an existing global
+`AGENTS.md`, compares it with the bundled example and orchestration rubric, helps
+resolve policy conflicts, previews a candidate diff, and requires approval plus a
+backup before replacing the user's file.
+
 ## What this restores
 
 `./apply.sh` applies the portable snapshot from `config/`. Most resources go into `~/.pi/agent/`; the Pi Lens policy goes to `~/.pi-lens/config.json`:
@@ -170,4 +181,6 @@ scripts/security_scan.py          # conservative pre-commit/publication scan
 docs/security.md
 docs/local-packages.md
 docs/extensions.md
+config/skills/review-global-agents/ # guided audit skill and canonical AGENTS example
+docs/STACK_CONVENTIONS.example.md # optional on-demand stack guidance
 ```
