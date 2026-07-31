@@ -22,14 +22,40 @@ Evaluate routing by capability and artifact:
 - lower-risk editorial work
 - independent/adversarial review
 
-Local model aliases and rankings are valid in a private file when they reflect models
-that are actually configured. For a portable file, prefer role placeholders and
-clearly marked customization points. A routing rule is useful only when it states why
-the role benefits from that model or harness.
+A useful private policy can maintain a relative model matrix with cost, intelligence,
+and taste scores. Cost should reflect the user's effective provider/harness economics;
+intelligence estimates unsupervised problem difficulty and correctness; taste covers
+UI/UX, API design, code quality, and prose. These are local decision aids, not
+objective benchmarks.
 
-Flag absolute rules that have no fallback, unavailable model names, stale CLI flags,
-or extra models introduced only for variety. Correctness should outrank taste and
-cost for shipped work.
+During review, offer three paths: adopt the example matrix, customize it, or use
+capability roles without numeric scores. When customizing, establish for each model:
+
+- alias, provider, invocation harness, and availability
+- relative cost, intelligence, and taste where useful
+- preferred and explicitly excluded roles
+- effort and context defaults
+- fallback and escalation model
+
+Also identify the primary orchestrator and suitable independent reviewers. Do not
+invent scores for the user or require an axis that does not help their decisions.
+
+A selection policy should classify task/artifact and risk, establish a minimum
+intelligence floor, use taste for user-facing work, and compare cost only among models
+that satisfy the quality requirement. It should account for harness/tool availability
+and context independence, then define escalation when output misses the bar.
+Correctness should outrank taste and cost for shipped work.
+
+Local aliases and rankings are valid when they reflect configured models. A public
+example may include an explicitly opinionated worked matrix, but users must replace
+unavailable aliases and treat scores as editable. Every routing alias should map to a
+matrix row or capability definition, and every mandatory specialist needs a fallback.
+
+Flag absolute rules with no fallback, unavailable names, stale CLI flags, roles that
+contradict scores without explanation, cost choices below the quality floor, or models
+introduced only for variety. Important UI work should cover both experience/visual
+quality and integration/correctness, whether through one qualified model or
+complementary reviewers.
 
 ## Delegation shape
 

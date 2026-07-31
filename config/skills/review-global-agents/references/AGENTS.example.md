@@ -1,8 +1,9 @@
 # Global agent guidance example
 
-> Copy and adapt this file to `~/.pi/agent/AGENTS.md`. It is intentionally
-> provider-neutral: replace the role placeholders with models and tools available
-> in your environment. Project instructions should override this global guidance.
+> Copy and adapt this file to `~/.pi/agent/AGENTS.md`. It includes an
+> opinionated model matrix as a worked default; replace unavailable aliases, scores,
+> harnesses, and routing rules with ones verified in your environment. Project
+> instructions should override this global guidance.
 
 These rules govern how agents work across projects. Use judgment on trivial tasks;
 apply the full workflow when risk, ambiguity, or scope warrants it.
@@ -13,8 +14,8 @@ Keep this file about **how agents work**. Put framework, product, and domain-spe
 knowledge in project instructions, skills, or on-demand references so it does not
 consume context on unrelated tasks.
 
-If you maintain shared stack guidance, load it only when relevant. See
-[`STACK_CONVENTIONS.example.md`](STACK_CONVENTIONS.example.md) for one pattern.
+If you maintain shared stack guidance, load it only when relevant rather than
+embedding it in this always-loaded file.
 
 A delegated worker receiving a self-contained task should do that task directly.
 The orchestration rules below are primarily for the interactive parent agent.
@@ -42,25 +43,72 @@ The orchestration rules below are primarily for the interactive parent agent.
 
 ## Model and role selection
 
-Choose models by role and capability rather than brand loyalty. Define local aliases
-for these roles using models actually available to you:
+Maintain a small model matrix and route work by capability and artifact rather than
+brand loyalty. The scores below are an opinionated example from one working setup,
+not universal benchmarks.
 
-- **Primary reasoning model** — orchestration, planning, architecture, debugging,
-  correctness, security, and final synthesis.
-- **UI/design specialist** — visual design, frontend interaction, accessibility,
-  animation, responsive behavior, and user-facing copy.
-- **Execution model** — bounded, clear-spec implementation or mechanical work.
-- **Editorial model** — lower-risk documentation, release notes, summaries, and
-  prose cleanup.
-- **Independent reviewer** — a fresh-context model used to challenge the plan or
-  implementation.
+| model | cost | intelligence | taste |
+| --- | ---: | ---: | ---: |
+| gpt-5.6-sol | 9 | 8 | 5 |
+| gpt-5.6-terra | 5 | 5 | 7 |
+| sonnet-5 | 5 | 5 | 7 |
+| opus-5 | 4 | 7 | 8 |
 
-Treat routing as a default, not a guarantee. Judge the artifact, rerun or repair weak
-work, and let correctness outrank taste and cost for anything that ships. Do not add
-models merely for variety; every delegate needs a concrete role and success criteria.
+Scores are relative within the configured model set:
 
-Keep authority in the parent agent. Delegates investigate, advise, implement, or
-review; the parent resolves disagreements, verifies the result, and owns the
+- **Cost** means effective cost through the actual provider/harness, not public list
+  price.
+- **Intelligence** means the difficulty the model can handle unsupervised while
+  preserving correctness.
+- **Taste** covers UI/UX, visual judgment, API design, code quality, and prose.
+
+Availability, harness/tool support, context requirements, and prior failures can
+override the numeric ranking. Keep the table current as models and routing economics
+change, and do not make an unavailable alias mandatory.
+
+### Selection algorithm
+
+For every delegation:
+
+1. Classify the artifact, task shape, risk, and required independence.
+2. Set the minimum intelligence needed for a correct unsupervised result.
+3. Among models meeting that floor, prioritize taste for UI, API design, and other
+   user-facing artifacts.
+4. Use cost only after the quality threshold is satisfied; for shipped work,
+   **intelligence > taste > cost**, with cost acting as a tie-breaker.
+5. Confirm that the required model, provider, harness, tools, and context mode are
+   actually available.
+6. Choose fresh context for independent/adversarial review and inherited context only
+   when accumulated decisions are necessary.
+7. If output misses the bar, rerun or repair it with the model best suited to the
+   failure without asking merely to switch models.
+8. Never introduce a model solely for variety; each delegate needs a concrete role,
+   success criteria, and reason for its selection.
+
+### Example routing defaults
+
+- **gpt-5.6-sol — primary reasoning and final authority:** orchestration, planning,
+  architecture, debugging, backend/domain logic, migrations, test strategy,
+  correctness/security review, and final synthesis.
+- **opus-5 — UI and high-taste specialist:** visual design, frontend interaction,
+  accessibility, animation, responsive behavior, API experience, user-facing copy,
+  and visual-quality review.
+- **gpt-5.6-terra — lower-risk editorial specialist:** documentation, release notes,
+  issue/PR writing, summaries, and prose cleanup when deeper reasoning is unnecessary.
+- **sonnet-5 — bounded execution model:** clear-scope work that benefits from its
+  agent harness but does not require the primary model's reasoning or the UI
+  specialist's judgment.
+- **Important UI work:** use both the primary reasoning model for integration and
+  correctness and the UI specialist for experience and visual quality.
+- **Independent reviews:** choose the strongest suitable reviewer in fresh context;
+  use a complementary model when a second perspective materially reduces risk.
+
+Define a fallback for every mandatory specialist. When a preferred model or harness
+is unavailable, use the strongest available model that meets the quality floor and
+report the deviation when it affects confidence.
+
+Keep authority in the primary parent model. Delegates investigate, advise, implement,
+or review; the parent resolves disagreements, verifies the result, and owns the
 user-facing answer.
 
 ## Delegation rules
