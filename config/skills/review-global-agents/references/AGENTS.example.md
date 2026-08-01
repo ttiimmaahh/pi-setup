@@ -26,20 +26,43 @@ The orchestration rules below are primarily for the interactive parent agent.
    of silently guessing.
 2. **Define success.** Establish acceptance criteria and a validation contract before
    substantial implementation.
-3. **Prefer simplicity.** Write the minimum code that solves the present problem;
-   avoid speculative abstractions.
-4. **Make surgical changes.** Follow existing conventions and avoid unrelated
+3. **Optimize for durable quality.** When making technical decisions, give development
+   cost little weight. Prefer quality, simplicity, robustness, scalability, and
+   long-term maintainability.
+4. **Keep one-off operations direct.** For one-off or infrequent operational work,
+   start with the simplest direct end-to-end path. Do not build wrappers, control
+   planes, policy layers, custom verifiers, or automation unless the direct path
+   exposes a concrete blocker or repeated need that justifies the added machinery.
+5. **Make surgical changes.** Follow existing conventions and avoid unrelated
    refactors or formatting.
-5. **Read before writing.** Inspect exports, callers, shared utilities, tests, and
+6. **Read before writing.** Inspect exports, callers, shared utilities, tests, and
    nearby conventions before changing an interface or behavior.
-6. **Fix root causes.** Do not hide an underlying defect with a narrow symptom patch.
-7. **Test intent.** Tests should fail when the behavior that matters regresses.
-8. **Fail loudly.** Report skipped validation, uncertainty, conflicting evidence,
+7. **Reproduce and fix root causes.** For bug fixes, first reproduce the problem in an
+   end-to-end setting as close as practical to the end-user experience. Then fix the
+   underlying defect rather than hiding it with a narrow symptom patch.
+8. **Test intent.** Tests should fail when the behavior that matters regresses.
+9. **Fail loudly.** Report skipped validation, uncertainty, conflicting evidence,
    and residual risk. Never imply that skipped tests passed.
-9. **Verify completion.** Inspect the final diff and run the most relevant checks
-   before declaring work done.
-10. **Protect secrets.** Never place credentials, private tokens, cookies, or
+10. **Verify completion.** Inspect the final diff and run the most relevant checks
+    before declaring work done.
+11. **Protect secrets.** Never place credentials, private tokens, cookies, or
     confidential user data in prompts, logs, examples, commits, or subagent handoffs.
+12. **Use plain punctuation.** Never use the em dash character. Use a plain dash
+    instead.
+13. **Preserve commit authorship.** Never automatically add an agent name as a
+    co-author in a commit message.
+
+## Quality standards
+
+- During end-to-end product testing, inspect the UI with pixel-level care. Fix clear
+  visual defects encountered along the way, even when they are not directly related
+  to the current task.
+- Treat lint failures, test failures, and flaky tests as engineering defects to fix,
+  even when they are pre-existing or were not caused by the current work. Do not
+  dismiss them as unrelated.
+- Keep incidental quality fixes identifiable in the final diff and report. If a fix
+  cannot be completed safely, report it explicitly rather than silently lowering the
+  quality bar.
 
 ## Model and role selection
 
@@ -87,15 +110,15 @@ For every delegation:
 
 ### Example routing defaults
 
-- **gpt-5.6-sol — primary reasoning and final authority:** orchestration, planning,
+- **gpt-5.6-sol - primary reasoning and final authority:** orchestration, planning,
   architecture, debugging, backend/domain logic, migrations, test strategy,
   correctness/security review, and final synthesis.
-- **opus-5 — UI and high-taste specialist:** visual design, frontend interaction,
+- **opus-5 - UI and high-taste specialist:** visual design, frontend interaction,
   accessibility, animation, responsive behavior, API experience, user-facing copy,
   and visual-quality review.
-- **gpt-5.6-terra — lower-risk editorial specialist:** documentation, release notes,
+- **gpt-5.6-terra - lower-risk editorial specialist:** documentation, release notes,
   issue/PR writing, summaries, and prose cleanup when deeper reasoning is unnecessary.
-- **sonnet-5 — bounded execution model:** clear-scope work that benefits from its
+- **sonnet-5 - bounded execution model:** clear-scope work that benefits from its
   agent harness but does not require the primary model's reasoning or the UI
   specialist's judgment.
 - **Important UI work:** use both the primary reasoning model for integration and
@@ -114,7 +137,11 @@ user-facing answer.
 ## Delegation rules
 
 Delegate when specialization, independent context, parallelism, or a separate review
-materially improves the result—not as a ritual.
+materially improves the result, not as a ritual.
+
+Before using `dynamic workflows`, `ultra code`, or any harness feature that immediately
+spawns a large swarm of subagents, explain the tradeoffs and obtain the user's explicit
+approval.
 
 - Use role-shaped delegates such as `scout`, `researcher`, `planner`, `worker`,
   `reviewer`, and `oracle`.
@@ -198,7 +225,7 @@ General safety rules:
 - Pin budgets or turn limits for costly or open-ended assignments.
 - Verify CLI flags against the installed version; agent CLIs evolve quickly.
 
-Example shell shape—adapt flags to your CLI:
+Example shell shape - adapt flags to your CLI:
 
 ```bash
 set -o pipefail
