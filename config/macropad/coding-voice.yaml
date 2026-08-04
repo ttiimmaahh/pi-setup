@@ -1,38 +1,43 @@
-# CH57x 3x2 + knob macropad profile for Claude Code and Pi.
+# Universal-identity CH57x 3x2 + knob profile for Pi and Claude Code.
 # Normal orientation: six buttons on the left, knob on the right.
+#
+# The five custom controls emit uncommon HID function keys. A terminal adapter
+# translates those identities into documented application chords. F14/F15 are
+# skipped because macOS reserves them for display-brightness controls before a
+# terminal can bind them. The standard Submit/Escape/Interrupt/Details buttons
+# retain their ordinary portable meanings.
 model: ch57x-2
 orientation: normal
 rows: 3
 columns: 2
 knobs: 1
 
-# All three layers are intentionally identical so the side layer switch
-# cannot disable dictation unexpectedly. The voice button toggles recording:
-# tap once to start, then tap again to stop and transcribe.
+# The connected unit has no physical layer switch. Program all three stored
+# mappings identically so behavior never depends on an unknown active layer.
 layers:
   - buttons:
-      - ["ctrl-shift-v", "ctrl-alt-p"]
+      - ["f13", "f16"]
       - ["enter", "escape"]
       - ["ctrl-c", "ctrl-o"]
     knobs:
-      - ccw: "ctrl-shift-left"
-        press: "ctrl-shift-m"
-        cw: "ctrl-shift-right"
+      - ccw: "f17"
+        press: "f18"
+        cw: "f19"
 
   - buttons:
-      - ["ctrl-shift-v", "ctrl-alt-p"]
+      - ["f13", "f16"]
       - ["enter", "escape"]
       - ["ctrl-c", "ctrl-o"]
     knobs:
-      - ccw: "ctrl-shift-left"
-        press: "ctrl-shift-m"
-        cw: "ctrl-shift-right"
+      - ccw: "f17"
+        press: "f18"
+        cw: "f19"
 
   - buttons:
-      - ["ctrl-shift-v", "ctrl-alt-p"]
+      - ["f13", "f16"]
       - ["enter", "escape"]
       - ["ctrl-c", "ctrl-o"]
     knobs:
-      - ccw: "ctrl-shift-left"
-        press: "ctrl-shift-m"
-        cw: "ctrl-shift-right"
+      - ccw: "f17"
+        press: "f18"
+        cw: "f19"

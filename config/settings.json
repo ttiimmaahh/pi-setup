@@ -2,6 +2,7 @@
   "packages": [
     {
       "source": "npm:@plannotator/pi-extension",
+      "extensions": [],
       "skills": []
     },
     "npm:pi-hermes-memory",
@@ -30,7 +31,7 @@
     "scope": "global",
     "backend": "local",
     "localModel": "parakeet-v3",
-    "toggleShortcut": "ctrl+shift+v",
+    "toggleShortcut": "ctrl+alt+shift+up",
     "ttsEnabled": false,
     "ttsAutoSpeak": false,
     "autoSubmitOnSpeak": false,

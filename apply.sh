@@ -99,7 +99,7 @@ MACROPAD_SOURCE="$SOURCE_DIR/macropad"
 MACROPAD_TARGET="$HOME/.config/ch57x-keyboard-tool"
 if [[ -d "$MACROPAD_SOURCE" ]]; then
   mkdir -p "$MACROPAD_TARGET"
-  for filename in coding-voice.yaml CHEATSHEET.md; do
+  for filename in coding-voice.yaml coding-voice-ctrl-only-fallback.yaml CHEATSHEET.md; do
     [[ -f "$MACROPAD_SOURCE/$filename" ]] || continue
     if [[ -f "$MACROPAD_TARGET/$filename" ]]; then
       mkdir -p "$BACKUP_DIR/external/ch57x-keyboard-tool"
@@ -109,6 +109,61 @@ if [[ -d "$MACROPAD_SOURCE" ]]; then
     echo "  installed ~/.config/ch57x-keyboard-tool/$filename"
   done
 fi
+
+install_ghostty_macropad_adapter() {
+  local source="$MACROPAD_SOURCE/ghostty-f13-adapter.conf"
+  [[ -f "$source" ]] || return 0
+
+  local ghostty_dir="${XDG_CONFIG_HOME:-$HOME/.config}/ghostty"
+  local adapter="$ghostty_dir/macropad-f13-adapter.conf"
+  local config="$ghostty_dir/config"
+  mkdir -p "$ghostty_dir" "$BACKUP_DIR/external/ghostty"
+  [[ ! -f "$adapter" ]] || cp "$adapter" "$BACKUP_DIR/external/ghostty/macropad-f13-adapter.conf"
+  [[ ! -f "$config" ]] || cp "$config" "$BACKUP_DIR/external/ghostty/config"
+
+  cp "$source" "$adapter"
+  touch "$config"
+  if ! grep -Fqx 'config-file = macropad-f13-adapter.conf' "$config"; then
+    printf '\n# pi-setup CH57x portable adapter\nconfig-file = macropad-f13-adapter.conf\n' >>"$config"
+  fi
+
+  if command -v ghostty >/dev/null 2>&1; then
+    ghostty +validate-config --config-file="$config"
+  fi
+  echo "  installed Ghostty macropad adapter"
+}
+
+install_alacritty_macropad_adapter() {
+  local source="$MACROPAD_SOURCE/alacritty-f13-adapter.toml"
+  local installer="$SCRIPT_DIR/scripts/install_alacritty_macropad_adapter.js"
+  [[ -f "$source" && -f "$installer" ]] || return 0
+  if ! command -v node >/dev/null 2>&1; then
+    echo "Warning: Node.js is required to install the Alacritty macropad adapter." >&2
+    return 0
+  fi
+
+  local alacritty_dir="${XDG_CONFIG_HOME:-$HOME/.config}/alacritty"
+  node "$installer" \
+    --source "$source" \
+    --adapter "$alacritty_dir/macropad-f13-adapter.toml" \
+    --config "$alacritty_dir/alacritty.toml" \
+    --backup-dir "$BACKUP_DIR/external/alacritty"
+}
+
+install_claude_macropad_bindings() {
+  local source="$MACROPAD_SOURCE/claude-keybindings.json"
+  [[ -f "$source" ]] || return 0
+
+  local target="$HOME/.claude/keybindings.json"
+  mkdir -p "$(dirname "$target")" "$BACKUP_DIR/external/claude"
+  [[ ! -f "$target" ]] || cp "$target" "$BACKUP_DIR/external/claude/keybindings.json"
+  cp "$source" "$target"
+  echo "  installed Claude Code macropad bindings"
+}
+
+install_ghostty_macropad_adapter
+install_alacritty_macropad_adapter
+install_claude_macropad_bindings
 
 python3 "$SCRIPT_DIR/scripts/check_local_package_paths.py" "$SOURCE_DIR/settings.json" || true
 

@@ -144,7 +144,7 @@ $macropadSource = Join-Path $SourceDir "macropad"
 $macropadTarget = Join-Path $HOME ".config/ch57x-keyboard-tool"
 if (Test-Path -LiteralPath $macropadSource -PathType Container) {
   New-Item -ItemType Directory -Force -Path $macropadTarget | Out-Null
-  foreach ($filename in @("coding-voice.yaml", "CHEATSHEET.md")) {
+  foreach ($filename in @("coding-voice.yaml", "coding-voice-ctrl-only-fallback.yaml", "CHEATSHEET.md")) {
     $source = Join-Path $macropadSource $filename
     if (-not (Test-Path -LiteralPath $source -PathType Leaf)) { continue }
     $target = Join-Path $macropadTarget $filename
@@ -156,6 +156,43 @@ if (Test-Path -LiteralPath $macropadSource -PathType Container) {
     Copy-Item -LiteralPath $source -Destination $target -Force
     Write-Host "  installed ~/.config/ch57x-keyboard-tool/$filename"
   }
+}
+
+$alacrittyAdapterSource = Join-Path $macropadSource "alacritty-f13-adapter.toml"
+$alacrittyInstaller = Join-Path $ScriptDir "scripts/install_alacritty_macropad_adapter.js"
+if (
+  (Test-Path -LiteralPath $alacrittyAdapterSource -PathType Leaf) -and
+  (Test-Path -LiteralPath $alacrittyInstaller -PathType Leaf)
+) {
+  $nodeCommand = Get-Command node -ErrorAction SilentlyContinue
+  if ($null -eq $nodeCommand) {
+    Write-Warning "Node.js is required to install the Alacritty macropad adapter."
+  } else {
+    $appDataDir = if ($env:APPDATA) { $env:APPDATA } else { Join-Path $HOME "AppData/Roaming" }
+    $alacrittyDir = Join-Path $appDataDir "alacritty"
+    & $nodeCommand.Source $alacrittyInstaller `
+      --source $alacrittyAdapterSource `
+      --adapter (Join-Path $alacrittyDir "macropad-f13-adapter.toml") `
+      --config (Join-Path $alacrittyDir "alacritty.toml") `
+      --backup-dir (Join-Path $BackupDir "external/alacritty")
+    if ($LASTEXITCODE -ne 0) {
+      throw "Failed to install the Alacritty macropad adapter."
+    }
+  }
+}
+
+$claudeKeybindingsSource = Join-Path $macropadSource "claude-keybindings.json"
+if (Test-Path -LiteralPath $claudeKeybindingsSource -PathType Leaf) {
+  $claudeDir = Join-Path $HOME ".claude"
+  $claudeKeybindingsTarget = Join-Path $claudeDir "keybindings.json"
+  New-Item -ItemType Directory -Force -Path $claudeDir | Out-Null
+  if (Test-Path -LiteralPath $claudeKeybindingsTarget -PathType Leaf) {
+    $backupTarget = Join-Path $BackupDir "external/claude/keybindings.json"
+    New-Item -ItemType Directory -Force -Path (Split-Path -Parent $backupTarget) | Out-Null
+    Copy-Item -LiteralPath $claudeKeybindingsTarget -Destination $backupTarget -Force
+  }
+  Copy-Item -LiteralPath $claudeKeybindingsSource -Destination $claudeKeybindingsTarget -Force
+  Write-Host "  installed Claude Code macropad bindings"
 }
 
 $python = Get-PythonCommand

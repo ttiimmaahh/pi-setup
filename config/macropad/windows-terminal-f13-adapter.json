@@ -1,0 +1,31 @@
+{
+  "actions": [
+    {
+      "command": { "action": "sendInput", "input": "\u001b[1;8A" },
+      "id": "User.PiSetupMacropadVoice"
+    },
+    {
+      "command": { "action": "sendInput", "input": "\u001b[1;8B" },
+      "id": "User.PiSetupMacropadPlan"
+    },
+    {
+      "command": { "action": "sendInput", "input": "\u001b[1;8D" },
+      "id": "User.PiSetupMacropadKnobLeft"
+    },
+    {
+      "command": { "action": "sendInput", "input": "\u001b[3;8~" },
+      "id": "User.PiSetupMacropadKnobPress"
+    },
+    {
+      "command": { "action": "sendInput", "input": "\u001b[1;8C" },
+      "id": "User.PiSetupMacropadKnobRight"
+    }
+  ],
+  "keybindings": [
+    { "keys": "f13", "id": "User.PiSetupMacropadVoice" },
+    { "keys": "f16", "id": "User.PiSetupMacropadPlan" },
+    { "keys": "f17", "id": "User.PiSetupMacropadKnobLeft" },
+    { "keys": "f18", "id": "User.PiSetupMacropadKnobPress" },
+    { "keys": "f19", "id": "User.PiSetupMacropadKnobRight" }
+  ]
+}

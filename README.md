@@ -106,7 +106,7 @@ pi
 
 ## Optional voice-dictation macro pad
 
-I use a small **3×2 CH57x macro keyboard with a rotary knob** as a dedicated Pi controller. The included profile maps its voice button to `Ctrl+Shift+V`: tap once to start local dictation in Pi, then tap again to stop and insert the transcript. It also includes shortcuts for submit, escape, interrupt, details, planning mode, model selection, and effort controls.
+I use a small **3×2 CH57x macro keyboard with a rotary knob** as a dedicated Pi and Claude Code controller. The firmware emits uncommon F13/F16–F19 hardware identities, and terminal adapters translate them into documented application shortcuts without global F-key behavior. The voice button toggles local Pi dictation; the remaining controls cover submit, escape, interrupt, details, planning/mode, model selection, and contextual knob navigation.
 
 [![White 3×2 CH57x macro keyboard with rotary knob](docs/assets/ch57x-macro-pad.png)](https://amzn.to/4pMdCj6)
 

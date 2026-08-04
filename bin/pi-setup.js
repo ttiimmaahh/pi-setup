@@ -24,6 +24,15 @@ const portableFiles = [
 const portableDirs = ["prompts", "extensions", "skills", "themes"];
 const macropadSourceDir = path.join(sourceDir, "macropad");
 const macropadTargetDir = path.join(os.homedir(), ".config", "ch57x-keyboard-tool");
+const ghosttyConfigDir = path.join(
+  process.env.XDG_CONFIG_HOME || path.join(os.homedir(), ".config"),
+  "ghostty",
+);
+const claudeConfigDir = path.join(os.homedir(), ".claude");
+const alacrittyConfigDir =
+  process.platform === "win32"
+    ? path.join(process.env.APPDATA || path.join(os.homedir(), "AppData", "Roaming"), "alacritty")
+    : path.join(process.env.XDG_CONFIG_HOME || path.join(os.homedir(), ".config"), "alacritty");
 
 function usage() {
   console.log(`pi-setup
@@ -151,7 +160,7 @@ function installDir(relative, targetRoot, backupDir, dryRun) {
 function installMacropadAssets(backupDir, dryRun) {
   if (!exists(macropadSourceDir)) return;
 
-  for (const filename of ["coding-voice.yaml", "CHEATSHEET.md"]) {
+  for (const filename of ["coding-voice.yaml", "coding-voice-ctrl-only-fallback.yaml", "CHEATSHEET.md"]) {
     const source = path.join(macropadSourceDir, filename);
     if (!exists(source)) continue;
 
@@ -170,6 +179,88 @@ function installMacropadAssets(backupDir, dryRun) {
       fs.copyFileSync(source, target);
     }
   }
+}
+
+function installGhosttyMacropadAdapter(backupDir, dryRun) {
+  if (process.platform === "win32") return;
+
+  const source = path.join(macropadSourceDir, "ghostty-f13-adapter.conf");
+  if (!exists(source)) return;
+
+  const adapter = path.join(ghosttyConfigDir, "macropad-f13-adapter.conf");
+  const config = path.join(ghosttyConfigDir, "config");
+  const backupRoot = path.join(backupDir, "external", "ghostty");
+  for (const [target, filename] of [
+    [adapter, "macropad-f13-adapter.conf"],
+    [config, "config"],
+  ]) {
+    if (!exists(target)) continue;
+    console.log(`  backup Ghostty ${filename}`);
+    if (!dryRun) {
+      fs.mkdirSync(backupRoot, { recursive: true });
+      fs.copyFileSync(target, path.join(backupRoot, filename));
+    }
+  }
+
+  console.log("  install Ghostty macropad adapter");
+  if (dryRun) return;
+  fs.mkdirSync(ghosttyConfigDir, { recursive: true });
+  fs.copyFileSync(source, adapter);
+  const include = "config-file = macropad-f13-adapter.conf";
+  const existing = exists(config) ? fs.readFileSync(config, "utf8") : "";
+  if (!existing.split(/\r?\n/).includes(include)) {
+    fs.appendFileSync(
+      config,
+      `${existing.endsWith("\n") || existing.length === 0 ? "" : "\n"}\n# pi-setup CH57x portable adapter\n${include}\n`,
+    );
+  }
+
+  if (commandExists("ghostty")) {
+    const result = spawnSync("ghostty", ["+validate-config", `--config-file=${config}`], {
+      stdio: "inherit",
+    });
+    if (result.status !== 0) throw new Error("Ghostty macropad adapter validation failed");
+  }
+}
+
+function installAlacrittyMacropadAdapter(backupDir, dryRun) {
+  const installer = path.join(repoRoot, "scripts", "install_alacritty_macropad_adapter.js");
+  const source = path.join(macropadSourceDir, "alacritty-f13-adapter.toml");
+  if (!exists(installer) || !exists(source)) return;
+
+  const args = [
+    installer,
+    "--source",
+    source,
+    "--adapter",
+    path.join(alacrittyConfigDir, "macropad-f13-adapter.toml"),
+    "--config",
+    path.join(alacrittyConfigDir, "alacritty.toml"),
+    "--backup-dir",
+    path.join(backupDir, "external", "alacritty"),
+  ];
+  if (dryRun) args.push("--dry-run");
+  const result = spawnSync(process.execPath, args, { stdio: "inherit" });
+  if (result.status !== 0) throw new Error("Alacritty macropad adapter installation failed");
+}
+
+function installClaudeMacropadBindings(backupDir, dryRun) {
+  const source = path.join(macropadSourceDir, "claude-keybindings.json");
+  if (!exists(source)) return;
+
+  const target = path.join(claudeConfigDir, "keybindings.json");
+  const backup = path.join(backupDir, "external", "claude", "keybindings.json");
+  if (exists(target)) {
+    console.log("  backup Claude Code keybindings");
+    if (!dryRun) {
+      fs.mkdirSync(path.dirname(backup), { recursive: true });
+      fs.copyFileSync(target, backup);
+    }
+  }
+  console.log("  install Claude Code macropad bindings");
+  if (dryRun) return;
+  fs.mkdirSync(claudeConfigDir, { recursive: true });
+  fs.copyFileSync(source, target);
 }
 
 function installPiLensConfig(configPath, backupDir, dryRun) {
@@ -318,6 +409,9 @@ function applySetup(args) {
   installPiLensConfig(piLensConfigPath, backupDir, args.dryRun);
   installWebToolsDependencies(targetRoot, args.dryRun);
   installMacropadAssets(backupDir, args.dryRun);
+  installGhosttyMacropadAdapter(backupDir, args.dryRun);
+  installAlacrittyMacropadAdapter(backupDir, args.dryRun);
+  installClaudeMacropadBindings(backupDir, args.dryRun);
 
   warnLocalPackagePaths();
   reconcilePiPackages(args.dryRun, args.update);

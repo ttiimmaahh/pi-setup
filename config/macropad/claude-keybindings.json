@@ -1,0 +1,30 @@
+{
+  "$schema": "https://www.schemastore.org/claude-code-keybindings.json",
+  "$docs": "https://code.claude.com/docs/en/keybindings",
+  "bindings": [
+    {
+      "context": "Chat",
+      "bindings": {
+        "ctrl+meta+p": "chat:cycleMode",
+        "ctrl+shift+m": "chat:modelPicker",
+        "ctrl+shift+left": "chat:cycleMode",
+        "ctrl+shift+right": "chat:cycleMode",
+        "ctrl+alt+shift+down": "chat:cycleMode",
+        "ctrl+alt+shift+left": "chat:cycleMode",
+        "ctrl+alt+shift+delete": "chat:modelPicker",
+        "ctrl+alt+shift+right": "chat:cycleMode"
+      }
+    },
+    {
+      "context": "Select",
+      "bindings": {
+        "ctrl+shift+left": "select:previous",
+        "ctrl+shift+right": "select:next",
+        "ctrl+shift+m": "select:accept",
+        "ctrl+alt+shift+left": "select:previous",
+        "ctrl+alt+shift+delete": "select:accept",
+        "ctrl+alt+shift+right": "select:next"
+      }
+    }
+  ]
+}

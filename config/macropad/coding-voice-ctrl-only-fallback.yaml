@@ -1,0 +1,35 @@
+# Confirmed Ctrl-only CH57x fallback captured from the connected device.
+# Keep this file so the pre-prototype behavior can be restored explicitly.
+model: ch57x-2
+orientation: normal
+rows: 3
+columns: 2
+knobs: 1
+
+layers:
+  - buttons:
+      - ["ctrl-g", "ctrl-p"]
+      - ["enter", "escape"]
+      - ["ctrl-c", "ctrl-o"]
+    knobs:
+      - ccw: "ctrl-r"
+        press: "ctrl-l"
+        cw: "ctrl-n"
+
+  - buttons:
+      - ["ctrl-g", "ctrl-p"]
+      - ["enter", "escape"]
+      - ["ctrl-c", "ctrl-o"]
+    knobs:
+      - ccw: "ctrl-r"
+        press: "ctrl-l"
+        cw: "ctrl-n"
+
+  - buttons:
+      - ["ctrl-g", "ctrl-p"]
+      - ["enter", "escape"]
+      - ["ctrl-c", "ctrl-o"]
+    knobs:
+      - ccw: "ctrl-r"
+        press: "ctrl-l"
+        cw: "ctrl-n"

@@ -1,0 +1,12 @@
+# CH57x macropad adapter for Alacritty on Windows and Linux.
+# Import this file from alacritty.toml. It translates stable hardware
+# identities into the same application sequences used by the Ghostty adapter.
+
+[keyboard]
+bindings = [
+  { key = "F13", chars = "\u001b[1;8A" }, # Voice: Ctrl+Alt+Shift+Up
+  { key = "F16", chars = "\u001b[1;8B" }, # Plan: Ctrl+Alt+Shift+Down
+  { key = "F17", chars = "\u001b[1;8D" }, # Knob CCW: Ctrl+Alt+Shift+Left
+  { key = "F18", chars = "\u001b[3;8~" }, # Knob press: Ctrl+Alt+Shift+Delete
+  { key = "F19", chars = "\u001b[1;8C" }, # Knob CW: Ctrl+Alt+Shift+Right
+]

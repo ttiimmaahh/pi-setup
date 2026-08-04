@@ -18,6 +18,8 @@ class PortableApplyTests(unittest.TestCase):
         self.bin_dir.mkdir()
         self.npm_log = self.workdir / "npm-args.txt"
         self.pi_lens_config = self.workdir / "pi-lens/config.json"
+        self.home = self.workdir / "home"
+        self.home.mkdir()
 
     def write_command(self, name: str, body: str) -> Path:
         command = self.bin_dir / name
@@ -30,6 +32,8 @@ class PortableApplyTests(unittest.TestCase):
         env["PATH"] = f"{self.bin_dir}{os.pathsep}{env['PATH']}"
         env["NPM_LOG"] = str(self.npm_log)
         env["PI_LENS_CONFIG_PATH"] = str(self.pi_lens_config)
+        env["HOME"] = str(self.home)
+        env["XDG_CONFIG_HOME"] = str(self.home / ".config")
         return env
 
     def read_json(self, path: Path):
@@ -80,6 +84,23 @@ class PortableApplyTests(unittest.TestCase):
         self.assertTrue((review_skill / "references/AGENTS.example.md").is_file())
         self.assertTrue((review_skill / "references/ORCHESTRATION_REVIEW.md").is_file())
         self.assert_npm_ci_arguments(extension_dir)
+        self.assertTrue((self.home / ".config/ch57x-keyboard-tool/coding-voice.yaml").is_file())
+        self.assertTrue(
+            (self.home / ".config/ch57x-keyboard-tool/coding-voice-ctrl-only-fallback.yaml").is_file()
+        )
+        ghostty_config = self.home / ".config/ghostty/config"
+        self.assertIn(
+            "config-file = macropad-f13-adapter.conf",
+            ghostty_config.read_text(encoding="utf-8"),
+        )
+        self.assertTrue((self.home / ".config/ghostty/macropad-f13-adapter.conf").is_file())
+        alacritty_config = self.home / ".config/alacritty/alacritty.toml"
+        self.assertTrue((self.home / ".config/alacritty/macropad-f13-adapter.toml").is_file())
+        self.assertIn(
+            'import = ["macropad-f13-adapter.toml"]',
+            alacritty_config.read_text(encoding="utf-8"),
+        )
+        self.assertTrue((self.home / ".claude/keybindings.json").is_file())
 
     def test_node_dry_run_does_not_write_or_invoke_npm(self):
         self.install_successful_fake_npm()
@@ -98,6 +119,9 @@ class PortableApplyTests(unittest.TestCase):
         self.assertFalse(target.exists())
         self.assertFalse(self.pi_lens_config.exists())
         self.assertFalse(self.npm_log.exists())
+        self.assertFalse((self.home / ".config/ghostty/config").exists())
+        self.assertFalse((self.home / ".config/alacritty/alacritty.toml").exists())
+        self.assertFalse((self.home / ".claude/keybindings.json").exists())
         self.assertIn("install Pi Lens config", result.stdout)
         self.assertIn("install extensions/web-tools dependencies", result.stdout)
 
@@ -138,6 +162,37 @@ class PortableApplyTests(unittest.TestCase):
         self.assertTrue((extension_dir / "index.ts").is_file())
         self.assertEqual(self.read_json(self.pi_lens_config), {"format": {"enabled": False}})
         self.assert_npm_ci_arguments(extension_dir)
+        self.assertTrue((self.home / ".config/ghostty/macropad-f13-adapter.conf").is_file())
+        self.assertTrue((self.home / ".config/alacritty/macropad-f13-adapter.toml").is_file())
+        self.assertTrue((self.home / ".claude/keybindings.json").is_file())
+
+    def test_alacritty_installer_preserves_config_and_is_idempotent(self):
+        config_dir = self.workdir / "alacritty"
+        config_dir.mkdir()
+        config = config_dir / "alacritty.toml"
+        config.write_text("[window]\nopacity = 0.9\n", encoding="utf-8")
+        adapter = config_dir / "macropad-f13-adapter.toml"
+        backup = self.workdir / "alacritty-backup"
+        command = [
+            "node",
+            str(ROOT / "scripts/install_alacritty_macropad_adapter.js"),
+            "--source",
+            str(ROOT / "config/macropad/alacritty-f13-adapter.toml"),
+            "--adapter",
+            str(adapter),
+            "--config",
+            str(config),
+            "--backup-dir",
+            str(backup),
+        ]
+        for _ in range(2):
+            result = subprocess.run(command, text=True, capture_output=True, check=False)
+            self.assertEqual(result.returncode, 0, result.stderr)
+
+        text = config.read_text(encoding="utf-8")
+        self.assertEqual(text.count("macropad-f13-adapter.toml"), 1)
+        self.assertIn("[window]\nopacity = 0.9", text)
+        self.assertTrue(adapter.is_file())
 
     def test_node_apply_backs_up_existing_pi_lens_config(self):
         self.install_successful_fake_npm()
