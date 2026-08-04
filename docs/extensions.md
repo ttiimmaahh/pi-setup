@@ -30,6 +30,16 @@ These are third-party or separately maintained packages currently referenced by 
 | `npm:@juicesharp/rpiv-todo` | Persistent model-managed task lists with dependency tracking and a live Pi overlay. |
 | `npm:@mobrienv/pi-tidy-tools` | Compact, reason-first rendering for Pi's built-in tools, with configurable layouts and diff summaries. |
 
+## Authored loose extensions
+
+| Extension | Inspiration | What it does |
+| --- | --- | --- |
+| [`terminal-status-title`](../config/extensions/terminal-status-title.js) | Pi's [`titlebar-spinner.ts`](https://github.com/earendil-works/pi-mono/blob/main/packages/coding-agent/examples/extensions/titlebar-spinner.ts) example | Owns the terminal title in TUI mode so concurrent sessions expose their state at a glance: `○` idle, an animated braille spinner while working, `✓` completed, `✗` failed, and `■` stopped. It uses the session name when present, falls back to the working-directory basename, refreshes after `/name`, and waits for `agent_settled` so retries and queued follow-ups do not briefly appear complete. |
+
+The title extension is intentionally TUI-only. This avoids emitting high-frequency
+`setTitle` requests in RPC mode. Pi's title API has no getter or keyed ownership, so
+this extension replaces—not temporarily stacks on—the built-in title while Pi runs.
+
 ## Vendored loose extensions
 
 | Extension | Source | What it does |

@@ -27,6 +27,7 @@ backup before replacing the user's file.
 - empty `mcp.json` placeholder so MCP servers/auth are not forced
 - prompt templates in `prompts/`
 - authored or vendored `extensions/`, `skills/`, and `themes/` if present
+- TUI terminal-title activity indicators for concurrent Pi sessions
 - locked runtime dependencies for the vendored `web-tools` extension (installed with `npm ci`)
 - global Pi Lens config at `~/.pi-lens/config.json`, keeping LSP/code intelligence enabled while disabling automatic formatting
 - CH57x macro-pad profile and `/macropad` cheat sheet under `~/.config/ch57x-keyboard-tool/`

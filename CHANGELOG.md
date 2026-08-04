@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 This project follows semantic versioning. Releases are cut with `npm version` and published as GitHub Releases from tags.
 
+## [Unreleased]
+
+### Added
+
+- TUI-only terminal title indicators for idle, working, completed, failed, and stopped Pi sessions.
+
 ## [0.1.0] - 2026-06-27
 
 ### Added

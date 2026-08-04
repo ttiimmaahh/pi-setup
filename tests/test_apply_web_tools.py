@@ -71,6 +71,7 @@ class PortableApplyTests(unittest.TestCase):
         extension_dir = target / "extensions/web-tools"
         self.assertTrue((extension_dir / "index.ts").is_file())
         self.assertTrue((extension_dir / "package-lock.json").is_file())
+        self.assertTrue((target / "extensions/terminal-status-title.js").is_file())
         settings = self.read_json(target / "settings.json")
         self.assertNotIn("npm:pi-web-access", settings["packages"])
         self.assertEqual(self.read_json(self.pi_lens_config), {"format": {"enabled": False}})
