@@ -32,7 +32,6 @@ backup before replacing the user's file.
 - global Pi Lens config at `~/.pi-lens/config.json`, keeping LSP/code intelligence enabled while disabling automatic formatting
 - CH57x macro-pad profile and `/macropad` cheat sheet under `~/.config/ch57x-keyboard-tool/`
 - auth-free extension preference files, currently:
-  - `pi-handoff-config.json`
   - `pi-usage-bar/config.json`
 
 ## What this never stores

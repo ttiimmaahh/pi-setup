@@ -71,7 +71,6 @@ install_file settings.json
 install_file keybindings.json
 install_file models.json
 install_file mcp.json
-install_file pi-handoff-config.json
 install_file pi-usage-bar/config.json
 
 install_dir prompts

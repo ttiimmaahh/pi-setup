@@ -1,7 +1,0 @@
-{
-  "threshold": {
-    "type": "percent",
-    "value": 80
-  },
-  "compaction": "enrich"
-}

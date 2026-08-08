@@ -17,7 +17,6 @@ const portableFiles = [
   "keybindings.json",
   "models.json",
   "mcp.json",
-  "pi-handoff-config.json",
   path.join("pi-usage-bar", "config.json"),
 ];
 

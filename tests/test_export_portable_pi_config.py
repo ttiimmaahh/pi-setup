@@ -78,7 +78,6 @@ class PortableExportTests(unittest.TestCase):
         )
         self.write_json("models.json", {"providers": {"private": {"apiKey": "secret"}}})
         self.write_json("mcp.json", {"mcpServers": {"private": {"token": "secret"}}})
-        self.write_json("pi-handoff-config.json", {"enabled": True, "model": "private-model"})
 
         extensions = self.pi_dir / "extensions"
         extensions.mkdir()
@@ -108,10 +107,6 @@ class PortableExportTests(unittest.TestCase):
         self.assertEqual(
             self.read_exported_json("mcp.json"),
             {"imports": [], "mcpServers": {}},
-        )
-        self.assertEqual(
-            self.read_exported_json("pi-handoff-config.json"),
-            {"enabled": True},
         )
         self.assertTrue((self.out_dir / "extensions" / "portable.ts").is_file())
         self.assertFalse((self.out_dir / "extensions" / "herdr-agent-state.ts").exists())

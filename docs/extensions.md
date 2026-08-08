@@ -6,7 +6,6 @@ This setup doubles as a curated index of public Pi extensions I use day to day. 
 
 | Extension | Install/reference | What it does |
 | --- | --- | --- |
-| [`@ttiimmaahh/pi-handoff`](https://github.com/ttiimmaahh/pi-handoff) | `npm:@ttiimmaahh/pi-handoff` | Proactive context handoff for Pi. At a context-usage threshold, it can write a structured session handoff and offer to reload it in a new session. |
 | [`pi-sap-aicore`](https://github.com/ttiimmaahh/pi-sap-aicore) | `npm:pi-sap-aicore` | SAP AI Core provider for Pi, including orchestration and foundation model support. |
 | [`pi-usage-bar`](https://github.com/ttiimmaahh/pi-usage-bar) | `npm:pi-usage-bar` | Footer/statusline plus local usage ledger for per-session and per-project token/cost attribution. |
 
